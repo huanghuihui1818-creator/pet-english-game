@@ -13,52 +13,44 @@ body{
 }
 h1{margin:12px}
 
-/* ====== 宠物 ====== */
-.pet-wrap{margin:20px auto; width:220px;}
+/* ===== 宠物 ===== */
+.pet-wrap{position:relative;margin:20px auto;width:220px}
 .pet{
   width:200px;height:200px;margin:auto;
   transition:transform .3s;
 }
-.pet.happy{transform:translateY(-6px);}
-.blink{
-  animation:blink 4s infinite;
-}
-@keyframes blink{
-  0%,95%,100%{transform:scaleY(1)}
-  96%,99%{transform:scaleY(0.1)}
-}
+.pet.happy{transform:translateY(-6px)}
+.blink{animation:blink 4s infinite}
+@keyframes blink{0%,95%,100%{transform:scaleY(1)}96%,99%{transform:scaleY(.1)}}
 
-/* ====== 卡片 ====== */
+/* 装饰 */
+.decorate{
+  position:absolute;
+  left:50%;transform:translateX(-50%);
+  font-size:28px;
+}
+.hat{top:10px}
+.glasses{top:70px}
+.food{font-size:26px}
+
+/* ===== 卡片 ===== */
 .card{
-  background:#fff;
-  border-radius:16px;
-  padding:16px;
-  width:300px;
+  background:#fff;border-radius:16px;
+  padding:16px;width:320px;
   margin:12px auto;
   box-shadow:0 4px 10px rgba(0,0,0,.1);
 }
 .word{font-size:32px;margin-bottom:10px}
 button{
-  width:100%;
-  padding:12px;
-  margin:6px 0;
-  font-size:16px;
-  border:none;
-  border-radius:12px;
-  background:#4caf50;
-  color:#fff;
+  width:100%;padding:12px;
+  margin:6px 0;font-size:16px;
+  border:none;border-radius:12px;
+  background:#4caf50;color:#fff;
   cursor:pointer;
 }
 .shop-btn{background:#ff9800}
 .back-btn{background:#9e9e9e}
 .info{font-size:16px;margin:6px}
-
-/* ====== 装饰 ====== */
-.ribbon{
-  position:absolute;
-  top:40px;left:90px;
-  font-size:28px;
-}
 .hidden{display:none}
 </style>
 </head>
@@ -68,76 +60,63 @@ button{
 <h1>🐾 我的英语宠物</h1>
 
 <div class="pet-wrap">
-  <svg id="pet" class="pet happy" viewBox="0 0 200 200">
+  <svg id="pet" class="pet" viewBox="0 0 200 200">
     <circle cx="100" cy="100" r="90" fill="#FFD966"/>
-    <ellipse class="blink" cx="65" cy="80" rx="10" ry="14" fill="#000"/>
-    <ellipse class="blink" cx="135" cy="80" rx="10" ry="14" fill="#000"/>
+    <ellipse class="blink" cx="65" cy="80" rx="10" ry="14"/>
+    <ellipse class="blink" cx="135" cy="80" rx="10" ry="14"/>
     <path d="M70 120 Q100 145 130 120" stroke="#000" stroke-width="6" fill="none"/>
   </svg>
-  <div id="ribbon" class="ribbon hidden">🎀</div>
+  <div id="hat" class="decorate hat hidden">👒</div>
+  <div id="glasses" class="decorate glasses hidden">🕶️</div>
 </div>
 
 <div class="info" id="statusText"></div>
 <div class="info" id="scoreText"></div>
-<div class="info" id="limitText"></div>
 
-<!-- ====== 学习卡片 ====== -->
+<!-- 学习 -->
 <div class="card" id="gameCard">
   <div class="word" id="word"></div>
   <button onclick="answer(true)" id="btn1"></button>
   <button onclick="answer(false)" id="btn2"></button>
-  <button class="shop-btn" onclick="openShop()">🏪 去商店</button>
+  <button class="shop-btn" onclick="openShop()">🏪 商店</button>
 </div>
 
-<!-- ====== 商城 ====== -->
+<!-- 商城 -->
 <div class="card hidden" id="shopCard">
   <h3>🏪 宠物商店</h3>
-  <button onclick="buyFood()">🍖 食物（2 分）</button>
-  <button onclick="buyRibbon()">🎀 装饰（5 分）</button>
+  <button onclick="buyFood('🍎')">🍎 苹果（1分）</button>
+  <button onclick="buyFood('🍗')">🍗 鸡腿（2分）</button>
+  <button onclick="buyHat()">👒 帽子（5分）</button>
+  <button onclick="buyGlasses()">🕶️ 眼镜（5分）</button>
   <button class="back-btn" onclick="closeShop()">⬅ 返回</button>
 </div>
 
 <script>
-/* ===== 配置 ===== */
-const DAILY_LIMIT = 20;
-const SICK_DAY = 6;
-
+/* ===== 六年级词库（示例，可继续加） ===== */
 const words=[
- {w:"apple",c:"🍎 苹果",x:"🚗 汽车"},
- {w:"dog",c:"🐶 狗",x:"🐱 猫"},
- {w:"book",c:"📘 书",x:"⚽ 球"},
- {w:"milk",c:"🥛 牛奶",x:"🍞 面包"}
+{w:"important",c:"重要的",x:"便宜的"},
+{w:"careful",c:"小心的",x:"粗心的"},
+{w:"future",c:"将来",x:"过去"},
+{w:"healthy",c:"健康的",x:"虚弱的"},
+{w:"practice",c:"练习",x:"忘记"},
+{w:"different",c:"不同的",x:"相同的"},
+{w:"problem",c:"问题",x:"答案"},
+{w:"travel",c:"旅行",x:"停留"}
 ];
 
-/* ===== 状态 ===== */
 let state=JSON.parse(localStorage.getItem("petState"))||{
- score:0,mood:"happy",
- learnedToday:0,lastDay:"",
- sickWeek:-1, ribbon:false
+ score:0,mood:"sick",
+ hat:false,glasses:false,lastDay:""
 };
+
+const today=new Date().toDateString();
+if(state.lastDay!==today){
+ state.mood="sick";
+ state.lastDay=today;
+}
 
 function save(){localStorage.setItem("petState",JSON.stringify(state))}
 
-/* ===== 时间 ===== */
-const now=new Date();
-const today=now.toDateString();
-const week=getWeek(now);
-
-if(state.lastDay!==today){
- state.learnedToday=0;
- state.lastDay=today;
-}
-if(now.getDay()===SICK_DAY && state.sickWeek!==week){
- state.mood="sick";
- state.sickWeek=week;
-}
-
-function getWeek(d){
- const o=new Date(d.getFullYear(),0,1);
- return Math.ceil((((d-o)/86400000)+o.getDay()+1)/7);
-}
-
-/* ===== 学习 ===== */
 let current;
 function loadWord(){
  current=words[Math.floor(Math.random()*words.length)];
@@ -147,17 +126,9 @@ function loadWord(){
 }
 
 function answer(ok){
- if(state.learnedToday>=DAILY_LIMIT){
-  alert("今天学够啦 🌙");
-  return;
- }
  if(ok){
   state.score++;
-  state.learnedToday++;
   state.mood="happy";
-  if(state.mood==="sick"){
-    alert("你治好了宠物 ❤️");
-  }
   loadWord();
  }else{
   state.mood="hungry";
@@ -165,7 +136,7 @@ function answer(ok){
  save();render();
 }
 
-/* ===== 商城 ===== */
+/* 商城 */
 function openShop(){
  gameCard.classList.add("hidden");
  shopCard.classList.remove("hidden");
@@ -174,33 +145,36 @@ function closeShop(){
  shopCard.classList.add("hidden");
  gameCard.classList.remove("hidden");
 }
-function buyFood(){
- if(state.score<2){alert("积分不够 😊");return;}
- state.score-=2;
+function buyFood(f){
+ if(state.score<1){alert("积分不够 😊");return;}
+ state.score-=1;
  state.mood="happy";
- alert("宠物吃饱啦！");
+ alert("宠物吃了 "+f);
  save();render();
 }
-function buyRibbon(){
+function buyHat(){
  if(state.score<5){alert("积分不够 😊");return;}
  state.score-=5;
- state.ribbon=true;
- alert("宠物戴上了新装饰！");
+ state.hat=true;
+ save();render();
+}
+function buyGlasses(){
+ if(state.score<5){alert("积分不够 😊");return;}
+ state.score-=5;
+ state.glasses=true;
  save();render();
 }
 
-/* ===== 显示 ===== */
 function render(){
  scoreText.innerText="积分："+state.score;
- limitText.innerText=`今日学习：${state.learnedToday}/${DAILY_LIMIT}`;
-
  pet.classList.toggle("happy",state.mood==="happy");
  statusText.innerText=
   state.mood==="happy"?"状态：开心 😊":
   state.mood==="hungry"?"状态：有点饿 😕":
-  "状态：生病了 🤒（需要学习）";
+  "状态：今天有点不舒服 🤒";
 
- ribbon.classList.toggle("hidden",!state.ribbon);
+ hat.classList.toggle("hidden",!state.hat);
+ glasses.classList.toggle("hidden",!state.glasses);
 }
 
 loadWord();render();save();
