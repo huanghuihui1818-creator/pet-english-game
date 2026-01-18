@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>英语宠物 · 白色小狗</title>
+<title>英语宠物 · 白色小狗（五年级）</title>
 
 <style>
 body{
@@ -23,7 +23,7 @@ h1{margin:12px}
 .blink{animation:blink 4s infinite}
 @keyframes blink{0%,95%,100%{transform:scaleY(1)}96%,99%{transform:scaleY(.1)}}
 
-/* 配饰（按狗头比例） */
+/* 配饰 */
 .decorate{
   position:absolute;
   left:50%;transform:translateX(-50%);
@@ -35,11 +35,11 @@ h1{margin:12px}
 /* ===== 卡片 ===== */
 .card{
   background:#fff;border-radius:16px;
-  padding:16px;width:340px;
+  padding:16px;width:360px;
   margin:12px auto;
   box-shadow:0 4px 10px rgba(0,0,0,.1);
 }
-.word{font-size:28px;margin-bottom:10px}
+.word{font-size:26px;margin-bottom:10px}
 button{
   width:100%;padding:12px;
   margin:6px 0;font-size:16px;
@@ -56,6 +56,7 @@ input{
   font-size:18px;margin-top:8px;
   border-radius:8px;border:1px solid #ccc;
 }
+.hint{font-size:14px;color:#555;margin-top:6px}
 </style>
 </head>
 
@@ -82,7 +83,7 @@ input{
 
 <!-- 学习卡 -->
 <div class="card" id="gameCard">
-  <div class="word" id="word"></div>
+  <div class="word" id="question"></div>
 
   <!-- 选择题 -->
   <div id="choiceArea">
@@ -92,8 +93,9 @@ input{
 
   <!-- 拼写题 -->
   <div id="spellArea" class="hidden">
-    <div>✍️ 拼写这个单词：</div>
-    <input id="spellInput" placeholder="输入英文">
+    <div id="spellHint"></div>
+    <input id="spellInput" placeholder="请输入英文单词">
+    <div class="hint" id="spellTip"></div>
     <button onclick="checkSpell()">提交</button>
   </div>
 
@@ -110,57 +112,74 @@ input{
 </div>
 
 <script>
-/* ===== 六年级词库（100个） ===== */
+/* ===== 五年级词库 100 个 ===== */
 const words=[
-"important","careful","future","healthy","practice","different","problem","travel","language","subject",
-"science","history","culture","country","weather","season","holiday","exercise","answer","question",
-"library","museum","hospital","restaurant","kitchen","bathroom","bedroom","garden","building","street",
-"friendship","family","parents","children","teacher","student","homework","lesson","example","sentence",
-"meaning","dictionary","conversation","message","information","computer","internet","website","program",
-"engineer","doctor","driver","policeman","farmer","worker","manager","office","meeting","project",
-"shopping","market","supermarket","vegetable","fruit","breakfast","dinner","lunch","favorite","delicious",
-"exciting","interesting","difficult","easy","simple","serious","careless","honest","brave","quiet"
-].map(w=>({en:w,cn:"（认识这个词）"}));
+["apple","苹果"],["banana","香蕉"],["orange","橙子"],["pear","梨"],["grape","葡萄"],
+["dog","狗"],["cat","猫"],["rabbit","兔子"],["tiger","老虎"],["panda","熊猫"],
+["teacher","老师"],["student","学生"],["friend","朋友"],["family","家庭"],["parent","父母"],
+["school","学校"],["classroom","教室"],["library","图书馆"],["hospital","医院"],["shop","商店"],
+["run","跑"],["walk","走"],["jump","跳"],["swim","游泳"],["read","读"],
+["write","写"],["draw","画"],["sing","唱"],["dance","跳舞"],["play","玩"],
+["big","大的"],["small","小的"],["long","长的"],["short","短的"],["happy","开心的"],
+["sad","难过的"],["fast","快的"],["slow","慢的"],["early","早的"],["late","晚的"],
+["morning","早上"],["afternoon","下午"],["evening","晚上"],["today","今天"],["tomorrow","明天"],
+["sunny","晴朗的"],["rainy","下雨的"],["cloudy","多云的"],["windy","有风的"],["snowy","下雪的"],
+["food","食物"],["water","水"],["milk","牛奶"],["bread","面包"],["rice","米饭"],
+["book","书"],["pen","钢笔"],["desk","书桌"],["chair","椅子"],["bag","书包"],
+["red","红色"],["blue","蓝色"],["green","绿色"],["yellow","黄色"],["black","黑色"],
+["one","一"],["two","二"],["three","三"],["four","四"],["five","五"],
+["ten","十"],["old","老的"],["young","年轻的"],["new","新的"],["good","好的"],
+["bad","坏的"],["clean","干净的"],["dirty","脏的"],["open","打开"],["close","关闭"]
+].map(w=>({en:w[0],cn:w[1]}));
 
 /* ===== 状态 ===== */
-let state=JSON.parse(localStorage.getItem("petDog"))||{
+let state=JSON.parse(localStorage.getItem("petDog5"))||{
  score:0,mood:"happy",hat:false,glasses:false
 };
-
-function save(){localStorage.setItem("petDog",JSON.stringify(state))}
+function save(){localStorage.setItem("petDog5",JSON.stringify(state))}
 
 /* ===== 出题 ===== */
-let current,mode,choices=[];
+let current,mode,dir,choices=[];
 
 function loadQuestion(){
  spellInput.value="";
+ spellTip.innerText="";
  current=words[Math.floor(Math.random()*words.length)];
- mode=Math.random()<0.5?"choice":"spell";
 
- word.innerText=mode==="choice"?current.en:"拼写这个词";
+ mode=Math.random()<0.5?"choice":"spell";
+ dir=Math.random()<0.5?"en2cn":"cn2en";
 
  if(mode==="choice"){
   choiceArea.classList.remove("hidden");
   spellArea.classList.add("hidden");
 
-  const wrong=words[Math.floor(Math.random()*words.length)].en;
-  choices=[current.en,wrong].sort(()=>Math.random()-0.5);
-
+  if(dir==="en2cn"){
+    question.innerText=current.en+" 的意思是？";
+    const wrong=words[Math.floor(Math.random()*words.length)].cn;
+    choices=[current.cn,wrong].sort(()=>Math.random()-0.5);
+  }else{
+    question.innerText=current.cn+" 用英文怎么说？";
+    const wrong=words[Math.floor(Math.random()*words.length)].en;
+    choices=[current.en,wrong].sort(()=>Math.random()-0.5);
+  }
   c0.innerText=choices[0];
   c1.innerText=choices[1];
  }else{
   choiceArea.classList.add("hidden");
   spellArea.classList.remove("hidden");
+  question.innerText="拼写单词";
+  spellHint.innerText="中文提示："+current.cn;
  }
 }
 
 /* ===== 作答 ===== */
 function answerChoice(i){
- if(state.mood==="sick"){alert("小狗生病了，需要吃药 💊");return;}
- if(choices[i]===current.en){
+ const correct=(dir==="en2cn"?current.cn:current.en);
+ if(choices[i]===correct){
   state.score++;
   state.mood="happy";
  }else{
+  alert("提示：正确答案是「"+correct+"」");
   state.mood="hungry";
  }
  checkSick();
@@ -168,12 +187,12 @@ function answerChoice(i){
 }
 
 function checkSpell(){
- if(state.mood==="sick"){alert("小狗生病了，需要吃药 💊");return;}
  const v=spellInput.value.trim().toLowerCase();
  if(v===current.en.toLowerCase()){
   state.score++;
   state.mood="happy";
  }else{
+  alert("提示：正确拼写是 "+current.en);
   state.mood="hungry";
  }
  checkSick();
