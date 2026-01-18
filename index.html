@@ -107,24 +107,261 @@
 </div>
 
 <script>
-  let mood = "happy";
+  const words = [
+    {
+      word: "apple",
+      correct: "🍎 苹果",
+      wrong: "🚗 汽车"
+    },
+    {
+      word: "dog",
+      correct: "🐶 狗",
+      wrong: "🐱 猫"
+    },
+    {
+      word: "book",
+      correct: "📘 书",
+      wrong: "⚽ 球"
+    }
+  ];
 
-  function checkAnswer(correct) {
+  let mood = "happy";
+  let currentWord = null;
+
+  function loadWord() {
+    currentWord = words[Math.floor(Math.random() * words.length)];
+
+    document.getElementById("word").innerText = currentWord.word;
+
+    const options = document.querySelectorAll(".option");
+    options[0].innerText = currentWord.correct;
+    options[1].innerText = currentWord.wrong;
+  }
+
+  function checkAnswer(isCorrect) {
     const statusText = document.getElementById("statusText");
     const pet = document.getElementById("pet");
 
-    if (correct) {
+    if (isCorrect) {
       mood = "happy";
       pet.classList.add("happy");
       statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
-      alert("太棒了！宠物吃饱了！");
+      alert("太棒了！");
+      loadWord(); // 下一题
     } else {
       mood = "hungry";
       pet.classList.remove("happy");
       statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
     }
   }
+
+  loadWord();
 </script>
+<script>
+  const words = [
+    {
+      word: "apple",
+      correct: "🍎 苹果",
+      wrong: "🚗 汽车"
+    },
+    {
+      word: "dog",
+      correct: "🐶 狗",
+      wrong: "🐱 猫"
+    },
+    {
+      word: "book",
+      correct: "📘 书",
+      wrong: "⚽ 球"
+    }
+  ];
+
+  let mood = "happy";
+  let currentWord = null;
+
+  function loadWord() {
+    currentWord = words[Math.floor(Math.random() * words.length)];
+
+    document.getElementById("word").innerText = currentWord.word;
+
+    const options = document.querySelectorAll(".option");
+    options[0].innerText = currentWord.correct;
+    options[1].innerText = currentWord.wrong;
+  }
+
+  function checkAnswer(isCorrect) {
+    const statusText = document.getElementById("statusText");
+    const pet = document.getElementById("pet");
+
+    if (isCorrect) {
+      mood = "happy";
+      pet.classList.add("happy");
+      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
+      alert("太棒了！");
+      loadWord(); // 下一题
+    } else {
+      mood = "hungry";
+      pet.classList.remove("happy");
+      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
+    }
+  }
+
+  loadWord();
+</script>
+<script>
+  const words = [
+    {
+      word: "apple",
+      correct: "🍎 苹果",
+      wrong: "🚗 汽车"
+    },
+    {
+      word: "dog",
+      correct: "🐶 狗",
+      wrong: "🐱 猫"
+    },
+    {
+      word: "book",
+      correct: "📘 书",
+      wrong: "⚽ 球"
+    }
+  ];
+
+  let mood = "happy";
+  let currentWord = null;
+
+  function loadWord() {
+    currentWord = words[Math.floor(Math.random() * words.length)];
+
+    document.getElementById("word").innerText = currentWord.word;
+
+    const options = document.querySelectorAll(".option");
+    options[0].innerText = currentWord.correct;
+    options[1].innerText = currentWord.wrong;
+  }
+
+  function checkAnswer(isCorrect) {
+    const statusText = document.getElementById("statusText");
+    const pet = document.getElementById("pet");
+
+    if (isCorrect) {
+      mood = "happy";
+      pet.classList.add("happy");
+      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
+      alert("太棒了！");
+      loadWord(); // 下一题
+    } else {
+      mood = "hungry";
+      pet.classList.remove("happy");
+      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
+    }
+  }
+
+  loadWord();
+</script>
+<script>
+  const words = [
+    {
+      word: "apple",
+      correct: "🍎 苹果",
+      wrong: "🚗 汽车"
+    },
+    {
+      word: "dog",
+      correct: "🐶 狗",
+      wrong: "🐱 猫"
+    },
+    {
+      word: "book",
+      correct: "📘 书",
+      wrong: "⚽ 球"
+    }
+  ];
+
+  let mood = "happy";
+  let currentWord = null;
+
+  function loadWord() {
+    currentWord = words[Math.floor(Math.random() * words.length)];
+
+    document.getElementById("word").innerText = currentWord.word;
+
+    const options = document.querySelectorAll(".option");
+    options[0].innerText = currentWord.correct;
+    options[1].innerText = currentWord.wrong;
+  }
+
+  function checkAnswer(isCorrect) {
+    const statusText = document.getElementById("statusText");
+    const pet = document.getElementById("pet");
+
+    if (isCorrect) {
+      mood = "happy";
+      pet.classList.add("happy");
+      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
+      alert("太棒了！");
+      loadWord(); // 下一题
+    } else {
+      mood = "hungry";
+      pet.classList.remove("happy");
+      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
+    }
+  }
+
+  loadWord();
+</script>
+<script>
+  const words = [
+    {
+      word: "apple",
+      correct: "🍎 苹果",
+      wrong: "🚗 汽车"
+    },
+    {
+      word: "dog",
+      correct: "🐶 狗",
+      wrong: "🐱 猫"
+    },
+    {
+      word: "book",
+      correct: "📘 书",
+      wrong: "⚽ 球"
+    }
+  ];
+
+  let mood = "happy";
+  let currentWord = null;
+
+  function loadWord() {
+    currentWord = words[Math.floor(Math.random() * words.length)];
+
+    document.getElementById("word").innerText = currentWord.word;
+
+    const options = document.querySelectorAll(".option");
+    options[0].innerText = currentWord.correct;
+    options[1].innerText = currentWord.wrong;
+  }
+
+  function checkAnswer(isCorrect) {
+    const statusText = document.getElementById("statusText");
+    const pet = document.getElementById("pet");
+
+    if (isCorrect) {
+      mood = "happy";
+      pet.classList.add("happy");
+      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
+      alert("太棒了！");
+      loadWord(); // 下一题
+    } else {
+      mood = "hungry";
+      pet.classList.remove("happy");
+      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
+    }
+  }
+
+  loadWord();
+</script>
+
 
 </body>
 </html>
