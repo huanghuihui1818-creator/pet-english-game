@@ -2,45 +2,44 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>英语宠物 · 家庭版</title>
+<title>英语宠物 · 白色小狗</title>
 
 <style>
 body{
   margin:0;
   font-family:"Comic Sans MS","PingFang SC",sans-serif;
-  background:linear-gradient(#cceeff,#ffffff);
+  background:linear-gradient(#e6f4ff,#ffffff);
   text-align:center;
 }
 h1{margin:12px}
 
 /* ===== 宠物 ===== */
-.pet-wrap{position:relative;margin:20px auto;width:220px}
+.pet-wrap{position:relative;margin:20px auto;width:240px}
 .pet{
-  width:200px;height:200px;margin:auto;
+  width:220px;height:220px;margin:auto;
   transition:transform .3s;
 }
 .pet.happy{transform:translateY(-6px)}
 .blink{animation:blink 4s infinite}
 @keyframes blink{0%,95%,100%{transform:scaleY(1)}96%,99%{transform:scaleY(.1)}}
 
-/* 装饰 */
+/* 配饰（按狗头比例） */
 .decorate{
   position:absolute;
   left:50%;transform:translateX(-50%);
-  font-size:28px;
+  pointer-events:none;
 }
-.hat{top:10px}
-.glasses{top:70px}
-.food{font-size:26px}
+.hat{top:12px;font-size:36px}
+.glasses{top:82px;font-size:32px}
 
 /* ===== 卡片 ===== */
 .card{
   background:#fff;border-radius:16px;
-  padding:16px;width:320px;
+  padding:16px;width:340px;
   margin:12px auto;
   box-shadow:0 4px 10px rgba(0,0,0,.1);
 }
-.word{font-size:32px;margin-bottom:10px}
+.word{font-size:28px;margin-bottom:10px}
 button{
   width:100%;padding:12px;
   margin:6px 0;font-size:16px;
@@ -52,91 +51,143 @@ button{
 .back-btn{background:#9e9e9e}
 .info{font-size:16px;margin:6px}
 .hidden{display:none}
+input{
+  width:90%;padding:10px;
+  font-size:18px;margin-top:8px;
+  border-radius:8px;border:1px solid #ccc;
+}
 </style>
 </head>
 
 <body>
 
-<h1>🐾 我的英语宠物</h1>
+<h1>🐶 我的英语小狗</h1>
 
 <div class="pet-wrap">
   <svg id="pet" class="pet" viewBox="0 0 200 200">
-    <circle cx="100" cy="100" r="90" fill="#FFD966"/>
-    <ellipse class="blink" cx="65" cy="80" rx="10" ry="14"/>
-    <ellipse class="blink" cx="135" cy="80" rx="10" ry="14"/>
-    <path d="M70 120 Q100 145 130 120" stroke="#000" stroke-width="6" fill="none"/>
+    <circle cx="100" cy="110" r="80" fill="#ffffff" stroke="#ccc" stroke-width="4"/>
+    <ellipse cx="45" cy="70" rx="25" ry="45" fill="#fff" stroke="#ccc" stroke-width="3"/>
+    <ellipse cx="155" cy="70" rx="25" ry="45" fill="#fff" stroke="#ccc" stroke-width="3"/>
+    <ellipse class="blink" cx="75" cy="100" rx="10" ry="14"/>
+    <ellipse class="blink" cx="125" cy="100" rx="10" ry="14"/>
+    <circle cx="100" cy="120" r="6" fill="#000"/>
+    <path d="M85 135 Q100 145 115 135" stroke="#000" stroke-width="4" fill="none"/>
   </svg>
-  <div id="hat" class="decorate hat hidden">👒</div>
+  <div id="hat" class="decorate hat hidden">🎩</div>
   <div id="glasses" class="decorate glasses hidden">🕶️</div>
 </div>
 
 <div class="info" id="statusText"></div>
 <div class="info" id="scoreText"></div>
 
-<!-- 学习 -->
+<!-- 学习卡 -->
 <div class="card" id="gameCard">
   <div class="word" id="word"></div>
-  <button onclick="answer(true)" id="btn1"></button>
-  <button onclick="answer(false)" id="btn2"></button>
+
+  <!-- 选择题 -->
+  <div id="choiceArea">
+    <button onclick="answerChoice(0)" id="c0"></button>
+    <button onclick="answerChoice(1)" id="c1"></button>
+  </div>
+
+  <!-- 拼写题 -->
+  <div id="spellArea" class="hidden">
+    <div>✍️ 拼写这个单词：</div>
+    <input id="spellInput" placeholder="输入英文">
+    <button onclick="checkSpell()">提交</button>
+  </div>
+
   <button class="shop-btn" onclick="openShop()">🏪 商店</button>
 </div>
 
-<!-- 商城 -->
+<!-- 商店 -->
 <div class="card hidden" id="shopCard">
   <h3>🏪 宠物商店</h3>
-  <button onclick="buyFood('🍎')">🍎 苹果（1分）</button>
-  <button onclick="buyFood('🍗')">🍗 鸡腿（2分）</button>
-  <button onclick="buyHat()">👒 帽子（5分）</button>
+  <button onclick="buyHat()">🎩 帽子（5分）</button>
   <button onclick="buyGlasses()">🕶️ 眼镜（5分）</button>
+  <button onclick="buyMedicine()">💊 药（10分）</button>
   <button class="back-btn" onclick="closeShop()">⬅ 返回</button>
 </div>
 
 <script>
-/* ===== 六年级词库（示例，可继续加） ===== */
+/* ===== 六年级词库（100个） ===== */
 const words=[
-{w:"important",c:"重要的",x:"便宜的"},
-{w:"careful",c:"小心的",x:"粗心的"},
-{w:"future",c:"将来",x:"过去"},
-{w:"healthy",c:"健康的",x:"虚弱的"},
-{w:"practice",c:"练习",x:"忘记"},
-{w:"different",c:"不同的",x:"相同的"},
-{w:"problem",c:"问题",x:"答案"},
-{w:"travel",c:"旅行",x:"停留"}
-];
+"important","careful","future","healthy","practice","different","problem","travel","language","subject",
+"science","history","culture","country","weather","season","holiday","exercise","answer","question",
+"library","museum","hospital","restaurant","kitchen","bathroom","bedroom","garden","building","street",
+"friendship","family","parents","children","teacher","student","homework","lesson","example","sentence",
+"meaning","dictionary","conversation","message","information","computer","internet","website","program",
+"engineer","doctor","driver","policeman","farmer","worker","manager","office","meeting","project",
+"shopping","market","supermarket","vegetable","fruit","breakfast","dinner","lunch","favorite","delicious",
+"exciting","interesting","difficult","easy","simple","serious","careless","honest","brave","quiet"
+].map(w=>({en:w,cn:"（认识这个词）"}));
 
-let state=JSON.parse(localStorage.getItem("petState"))||{
- score:0,mood:"sick",
- hat:false,glasses:false,lastDay:""
+/* ===== 状态 ===== */
+let state=JSON.parse(localStorage.getItem("petDog"))||{
+ score:0,mood:"happy",hat:false,glasses:false
 };
 
-const today=new Date().toDateString();
-if(state.lastDay!==today){
- state.mood="sick";
- state.lastDay=today;
-}
+function save(){localStorage.setItem("petDog",JSON.stringify(state))}
 
-function save(){localStorage.setItem("petState",JSON.stringify(state))}
+/* ===== 出题 ===== */
+let current,mode,choices=[];
 
-let current;
-function loadWord(){
+function loadQuestion(){
+ spellInput.value="";
  current=words[Math.floor(Math.random()*words.length)];
- word.innerText=current.w;
- btn1.innerText=current.c;
- btn2.innerText=current.x;
+ mode=Math.random()<0.5?"choice":"spell";
+
+ word.innerText=mode==="choice"?current.en:"拼写这个词";
+
+ if(mode==="choice"){
+  choiceArea.classList.remove("hidden");
+  spellArea.classList.add("hidden");
+
+  const wrong=words[Math.floor(Math.random()*words.length)].en;
+  choices=[current.en,wrong].sort(()=>Math.random()-0.5);
+
+  c0.innerText=choices[0];
+  c1.innerText=choices[1];
+ }else{
+  choiceArea.classList.add("hidden");
+  spellArea.classList.remove("hidden");
+ }
 }
 
-function answer(ok){
- if(ok){
+/* ===== 作答 ===== */
+function answerChoice(i){
+ if(state.mood==="sick"){alert("小狗生病了，需要吃药 💊");return;}
+ if(choices[i]===current.en){
   state.score++;
   state.mood="happy";
-  loadWord();
  }else{
   state.mood="hungry";
  }
- save();render();
+ checkSick();
+ save();render();loadQuestion();
 }
 
-/* 商城 */
+function checkSpell(){
+ if(state.mood==="sick"){alert("小狗生病了，需要吃药 💊");return;}
+ const v=spellInput.value.trim().toLowerCase();
+ if(v===current.en.toLowerCase()){
+  state.score++;
+  state.mood="happy";
+ }else{
+  state.mood="hungry";
+ }
+ checkSick();
+ save();render();loadQuestion();
+}
+
+/* ===== 生病规则 ===== */
+function checkSick(){
+ if(state.score>30){
+  state.mood="sick";
+ }
+}
+
+/* ===== 商店 ===== */
 function openShop(){
  gameCard.classList.add("hidden");
  shopCard.classList.remove("hidden");
@@ -145,39 +196,34 @@ function closeShop(){
  shopCard.classList.add("hidden");
  gameCard.classList.remove("hidden");
 }
-function buyFood(f){
- if(state.score<1){alert("积分不够 😊");return;}
- state.score-=1;
- state.mood="happy";
- alert("宠物吃了 "+f);
- save();render();
-}
 function buyHat(){
- if(state.score<5){alert("积分不够 😊");return;}
- state.score-=5;
- state.hat=true;
- save();render();
+ if(state.score<5){alert("积分不够");return;}
+ state.score-=5;state.hat=true;save();render();
 }
 function buyGlasses(){
- if(state.score<5){alert("积分不够 😊");return;}
- state.score-=5;
- state.glasses=true;
- save();render();
+ if(state.score<5){alert("积分不够");return;}
+ state.score-=5;state.glasses=true;save();render();
+}
+function buyMedicine(){
+ if(state.score<10){alert("积分不够");return;}
+ if(state.mood!=="sick"){alert("小狗现在不需要吃药");return;}
+ state.score-=10;state.mood="happy";save();render();
 }
 
+/* ===== 显示 ===== */
 function render(){
  scoreText.innerText="积分："+state.score;
  pet.classList.toggle("happy",state.mood==="happy");
  statusText.innerText=
   state.mood==="happy"?"状态：开心 😊":
   state.mood==="hungry"?"状态：有点饿 😕":
-  "状态：今天有点不舒服 🤒";
+  "状态：生病了 🤒 需要💊";
 
  hat.classList.toggle("hidden",!state.hat);
  glasses.classList.toggle("hidden",!state.glasses);
 }
 
-loadWord();render();save();
+loadQuestion();render();save();
 </script>
 
 </body>
