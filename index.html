@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>我的英语宠物</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Comic Sans MS", "PingFang SC", sans-serif;
+      background: linear-gradient(#cceeff, #ffffff);
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    .pet {
+      width: 200px;
+      height: 200px;
+      margin: 20px auto;
+      background: #ffd966;
+      border-radius: 50%;
+      position: relative;
+      transition: transform 0.3s;
+    }
+
+    .pet.happy {
+      transform: scale(1.05);
+    }
+
+    .eye {
+      width: 20px;
+      height: 20px;
+      background: #000;
+      border-radius: 50%;
+      position: absolute;
+      top: 60px;
+    }
+
+    .eye.left { left: 60px; }
+    .eye.right { right: 60px; }
+
+    .mouth {
+      width: 60px;
+      height: 30px;
+      border-bottom: 5px solid #000;
+      border-radius: 0 0 60px 60px;
+      position: absolute;
+      top: 120px;
+      left: 70px;
+    }
+
+    .status {
+      margin: 10px;
+      font-size: 18px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #4caf50;
+      color: white;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button:disabled {
+      background: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🐾 我的英语宠物</h1>
+
+  <div id="pet" class="pet">
+    <div class="eye left"></div>
+    <div class="eye right"></div>
+    <div class="mouth"></div>
+  </div>
+
+  <div class="status" id="statusText">状态：开心 😊</div>
+
+  <button onclick="feedPet()">喂食（背单词）</button>
+  <button onclick="makePetSick()">本周生病</button>
+
+  <script>
+    let mood = "happy";
+
+    function updateStatus() {
+      const pet = document.getElementById("pet");
+      const statusText = document.getElementById("statusText");
+
+      pet.classList.remove("happy");
+
+      if (mood === "happy") {
+        statusText.innerText = "状态：开心 😊";
+        pet.classList.add("happy");
+      } else if (mood === "hungry") {
+        statusText.innerText = "状态：有点饿 😕";
+      } else if (mood === "sick") {
+        statusText.innerText = "状态：生病了 🤒（需要英语治疗）";
+      }
+    }
+
+    function feedPet() {
+      mood = "happy";
+      updateStatus();
+      alert("你背了一个单词，宠物很开心！");
+    }
+
+    function makePetSick() {
+      mood = "sick";
+      updateStatus();
+    }
+
+    updateStatus();
+  </script>
+
+</body>
+</html>
