@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>我的英语宠物</title>
+  <title>英语宠物（家庭版）</title>
   <style>
     body {
       margin: 0;
@@ -10,358 +10,155 @@
       background: linear-gradient(#cceeff, #ffffff);
       text-align: center;
     }
-
-    h1 {
-      margin-top: 20px;
-    }
-
+    h1 { margin-top: 16px; }
     .pet {
-      width: 200px;
-      height: 200px;
+      width: 200px; height: 200px;
       margin: 20px auto;
       background: #ffd966;
       border-radius: 50%;
       position: relative;
-      transition: transform 0.3s;
+      transition: transform .3s;
     }
-
-    .pet.happy {
-      transform: scale(1.05);
-    }
-
-    .eye {
-      width: 20px;
-      height: 20px;
-      background: #000;
-      border-radius: 50%;
-      position: absolute;
-      top: 60px;
-    }
-
-    .eye.left { left: 60px; }
-    .eye.right { right: 60px; }
-
-    .mouth {
-      width: 60px;
-      height: 30px;
-      border-bottom: 5px solid #000;
-      border-radius: 0 0 60px 60px;
-      position: absolute;
-      top: 120px;
-      left: 70px;
-    }
-
-    .status {
-      margin: 10px;
-      font-size: 18px;
-    }
-
+    .happy { transform: scale(1.05); }
+    .eye { width: 20px; height: 20px; background:#000; border-radius:50%; position:absolute; top:60px; }
+    .left { left:60px; } .right { right:60px; }
+    .mouth { width:60px; height:30px; border-bottom:5px solid #000; border-radius:0 0 60px 60px; position:absolute; top:120px; left:70px; }
     .card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      width: 280px;
-      margin: 20px auto;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background:#fff; border-radius:16px; padding:20px;
+      width:300px; margin:20px auto;
+      box-shadow:0 4px 10px rgba(0,0,0,.1);
     }
-
-    .word {
-      font-size: 32px;
-      margin-bottom: 10px;
-    }
-
+    .word { font-size:32px; margin-bottom:10px; }
     button {
-      padding: 12px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 12px;
-      background: #4caf50;
-      color: white;
-      cursor: pointer;
-      margin: 5px;
+      width:100%; margin:6px 0; padding:12px;
+      font-size:16px; border:none; border-radius:12px;
+      background:#4caf50; color:#fff; cursor:pointer;
     }
-
-    .option {
-      display: block;
-      width: 100%;
-      background: #2196f3;
-    }
+    .info { font-size:16px; margin:6px; }
   </style>
 </head>
 <body>
 
 <h1>🐾 我的英语宠物</h1>
 
-<div id="pet" class="pet happy">
+<div id="pet" class="pet">
   <div class="eye left"></div>
   <div class="eye right"></div>
   <div class="mouth"></div>
 </div>
 
-<div class="status" id="statusText">状态：开心 😊</div>
+<div class="info" id="statusText"></div>
+<div class="info" id="scoreText"></div>
+<div class="info" id="limitText"></div>
 
-<div class="card">
-  <div class="word" id="word">apple</div>
-  <button class="option" onclick="checkAnswer(true)">🍎 苹果</button>
-  <button class="option" onclick="checkAnswer(false)">🚗 汽车</button>
+<div class="card" id="gameCard">
+  <div class="word" id="word"></div>
+  <button onclick="answer(true)" id="btn1"></button>
+  <button onclick="answer(false)" id="btn2"></button>
 </div>
 
 <script>
-  const words = [
-    {
-      word: "apple",
-      correct: "🍎 苹果",
-      wrong: "🚗 汽车"
-    },
-    {
-      word: "dog",
-      correct: "🐶 狗",
-      wrong: "🐱 猫"
-    },
-    {
-      word: "book",
-      correct: "📘 书",
-      wrong: "⚽ 球"
-    }
-  ];
+/* ========= 配置 ========= */
+const DAILY_LIMIT = 20;
+const SICK_DAY = 6; // 周六（0=周日）
 
-  let mood = "happy";
-  let currentWord = null;
+const words = [
+  { w:"apple", c:"🍎 苹果", x:"🚗 汽车" },
+  { w:"dog",   c:"🐶 狗",   x:"🐱 猫" },
+  { w:"book",  c:"📘 书",   x:"⚽ 球" },
+  { w:"milk",  c:"🥛 牛奶", x:"🍞 面包" }
+];
 
-  function loadWord() {
-    currentWord = words[Math.floor(Math.random() * words.length)];
+/* ========= 状态 ========= */
+let state = JSON.parse(localStorage.getItem("petState")) || {
+  score: 0,
+  mood: "happy",
+  learnedToday: 0,
+  lastDay: "",
+  sickWeek: -1
+};
 
-    document.getElementById("word").innerText = currentWord.word;
+function save() {
+  localStorage.setItem("petState", JSON.stringify(state));
+}
 
-    const options = document.querySelectorAll(".option");
-    options[0].innerText = currentWord.correct;
-    options[1].innerText = currentWord.wrong;
+/* ========= 时间规则 ========= */
+const now = new Date();
+const today = now.toDateString();
+const week = getWeek(now);
+
+if (state.lastDay !== today) {
+  state.learnedToday = 0;
+  state.lastDay = today;
+}
+
+if (now.getDay() === SICK_DAY && state.sickWeek !== week) {
+  state.mood = "sick";
+  state.sickWeek = week;
+}
+
+function getWeek(d){
+  const onejan = new Date(d.getFullYear(),0,1);
+  return Math.ceil((((d - onejan) / 86400000) + onejan.getDay()+1)/7);
+}
+
+/* ========= 学习 ========= */
+let current;
+
+function loadWord() {
+  current = words[Math.floor(Math.random()*words.length)];
+  document.getElementById("word").innerText = current.w;
+  document.getElementById("btn1").innerText = current.c;
+  document.getElementById("btn2").innerText = current.x;
+}
+
+function answer(correct){
+  if (state.learnedToday >= DAILY_LIMIT) {
+    alert("今天学够啦，宠物要休息了 🌙");
+    return;
   }
 
-  function checkAnswer(isCorrect) {
-    const statusText = document.getElementById("statusText");
-    const pet = document.getElementById("pet");
+  if (correct) {
+    state.score++;
+    state.learnedToday++;
+    state.mood = "happy";
 
-    if (isCorrect) {
-      mood = "happy";
-      pet.classList.add("happy");
-      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
-      alert("太棒了！");
-      loadWord(); // 下一题
-    } else {
-      mood = "hungry";
-      pet.classList.remove("happy");
-      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
+    if (state.mood === "sick") {
+      state.mood = "happy";
+      alert("你治好了宠物！❤️");
     }
+    loadWord();
+  } else {
+    state.mood = "hungry";
   }
+  save();
+  render();
+}
 
-  loadWord();
+/* ========= 显示 ========= */
+function render(){
+  document.getElementById("scoreText").innerText = "积分：" + state.score;
+  document.getElementById("limitText").innerText =
+    `今日学习：${state.learnedToday}/${DAILY_LIMIT}`;
+
+  const pet = document.getElementById("pet");
+  pet.classList.remove("happy");
+
+  if (state.mood === "happy") {
+    document.getElementById("statusText").innerText = "状态：开心 😊";
+    pet.classList.add("happy");
+  } else if (state.mood === "hungry") {
+    document.getElementById("statusText").innerText = "状态：有点饿 😕";
+  } else {
+    document.getElementById("statusText").innerText = "状态：生病了 🤒（需要学习治疗）";
+  }
+}
+
+/* ========= 启动 ========= */
+loadWord();
+render();
+save();
 </script>
-<script>
-  const words = [
-    {
-      word: "apple",
-      correct: "🍎 苹果",
-      wrong: "🚗 汽车"
-    },
-    {
-      word: "dog",
-      correct: "🐶 狗",
-      wrong: "🐱 猫"
-    },
-    {
-      word: "book",
-      correct: "📘 书",
-      wrong: "⚽ 球"
-    }
-  ];
-
-  let mood = "happy";
-  let currentWord = null;
-
-  function loadWord() {
-    currentWord = words[Math.floor(Math.random() * words.length)];
-
-    document.getElementById("word").innerText = currentWord.word;
-
-    const options = document.querySelectorAll(".option");
-    options[0].innerText = currentWord.correct;
-    options[1].innerText = currentWord.wrong;
-  }
-
-  function checkAnswer(isCorrect) {
-    const statusText = document.getElementById("statusText");
-    const pet = document.getElementById("pet");
-
-    if (isCorrect) {
-      mood = "happy";
-      pet.classList.add("happy");
-      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
-      alert("太棒了！");
-      loadWord(); // 下一题
-    } else {
-      mood = "hungry";
-      pet.classList.remove("happy");
-      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
-    }
-  }
-
-  loadWord();
-</script>
-<script>
-  const words = [
-    {
-      word: "apple",
-      correct: "🍎 苹果",
-      wrong: "🚗 汽车"
-    },
-    {
-      word: "dog",
-      correct: "🐶 狗",
-      wrong: "🐱 猫"
-    },
-    {
-      word: "book",
-      correct: "📘 书",
-      wrong: "⚽ 球"
-    }
-  ];
-
-  let mood = "happy";
-  let currentWord = null;
-
-  function loadWord() {
-    currentWord = words[Math.floor(Math.random() * words.length)];
-
-    document.getElementById("word").innerText = currentWord.word;
-
-    const options = document.querySelectorAll(".option");
-    options[0].innerText = currentWord.correct;
-    options[1].innerText = currentWord.wrong;
-  }
-
-  function checkAnswer(isCorrect) {
-    const statusText = document.getElementById("statusText");
-    const pet = document.getElementById("pet");
-
-    if (isCorrect) {
-      mood = "happy";
-      pet.classList.add("happy");
-      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
-      alert("太棒了！");
-      loadWord(); // 下一题
-    } else {
-      mood = "hungry";
-      pet.classList.remove("happy");
-      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
-    }
-  }
-
-  loadWord();
-</script>
-<script>
-  const words = [
-    {
-      word: "apple",
-      correct: "🍎 苹果",
-      wrong: "🚗 汽车"
-    },
-    {
-      word: "dog",
-      correct: "🐶 狗",
-      wrong: "🐱 猫"
-    },
-    {
-      word: "book",
-      correct: "📘 书",
-      wrong: "⚽ 球"
-    }
-  ];
-
-  let mood = "happy";
-  let currentWord = null;
-
-  function loadWord() {
-    currentWord = words[Math.floor(Math.random() * words.length)];
-
-    document.getElementById("word").innerText = currentWord.word;
-
-    const options = document.querySelectorAll(".option");
-    options[0].innerText = currentWord.correct;
-    options[1].innerText = currentWord.wrong;
-  }
-
-  function checkAnswer(isCorrect) {
-    const statusText = document.getElementById("statusText");
-    const pet = document.getElementById("pet");
-
-    if (isCorrect) {
-      mood = "happy";
-      pet.classList.add("happy");
-      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
-      alert("太棒了！");
-      loadWord(); // 下一题
-    } else {
-      mood = "hungry";
-      pet.classList.remove("happy");
-      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
-    }
-  }
-
-  loadWord();
-</script>
-<script>
-  const words = [
-    {
-      word: "apple",
-      correct: "🍎 苹果",
-      wrong: "🚗 汽车"
-    },
-    {
-      word: "dog",
-      correct: "🐶 狗",
-      wrong: "🐱 猫"
-    },
-    {
-      word: "book",
-      correct: "📘 书",
-      wrong: "⚽ 球"
-    }
-  ];
-
-  let mood = "happy";
-  let currentWord = null;
-
-  function loadWord() {
-    currentWord = words[Math.floor(Math.random() * words.length)];
-
-    document.getElementById("word").innerText = currentWord.word;
-
-    const options = document.querySelectorAll(".option");
-    options[0].innerText = currentWord.correct;
-    options[1].innerText = currentWord.wrong;
-  }
-
-  function checkAnswer(isCorrect) {
-    const statusText = document.getElementById("statusText");
-    const pet = document.getElementById("pet");
-
-    if (isCorrect) {
-      mood = "happy";
-      pet.classList.add("happy");
-      statusText.innerText = "状态：开心 😊 你帮宠物学会了一个单词！";
-      alert("太棒了！");
-      loadWord(); // 下一题
-    } else {
-      mood = "hungry";
-      pet.classList.remove("happy");
-      statusText.innerText = "状态：有点饿 😕 没关系，再试一次";
-    }
-  }
-
-  loadWord();
-</script>
-
 
 </body>
 </html>
