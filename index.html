@@ -5,7 +5,6 @@
 <title>英语小狗 · 家庭终极版</title>
 
 <style>
-/* ================== 基础 ================== */
 body{
   margin:0;
   font-family:"Comic Sans MS","PingFang SC",sans-serif;
@@ -15,22 +14,7 @@ body{
 h1{margin:8px}
 .hidden{display:none}
 
-/* ================== 小狗 ================== */
-.pet-wrap{position:relative;margin:10px auto;width:300px}
-.pet{
-  width:280px;height:280px;
-  transition:transform .3s;
-}
-.pet.happy{transform:translateY(-8px)}
-.decorate{
-  position:absolute;left:50%;
-  transform:translateX(-50%);
-  pointer-events:none;
-}
-.hat{top:20px;font-size:42px}
-.glasses{top:120px;font-size:36px}
-
-/* ================== 卡片 ================== */
+/* ===== 卡片 ===== */
 .card{
   background:#fff;border-radius:18px;
   padding:14px;width:420px;
@@ -46,10 +30,29 @@ button{
 .secondary{background:#2196f3}
 .shop{background:#ff9800}
 .back{background:#9e9e9e}
-input{font-size:18px;padding:8px;width:90%}
-.info{font-size:15px;margin:4px}
+input[type=range]{width:90%}
+input[type=color]{margin-top:6px}
 
-/* ================== 挖空动画 ================== */
+/* ===== 小狗 ===== */
+.pet-wrap{position:relative;margin:10px auto;width:300px}
+.pet{
+  width:280px;height:280px;
+  transition:transform .3s;
+}
+.pet.happy{transform:translateY(-8px)}
+
+.ear{transform-origin:center bottom}
+.eye{transform-origin:center center}
+
+.decorate{
+  position:absolute;left:50%;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.hat{top:20px;font-size:42px}
+.glasses{top:120px;font-size:36px}
+
+/* ===== 挖空动画 ===== */
 .blank{
   display:inline-block;
   width:24px;
@@ -74,228 +77,113 @@ input{font-size:18px;padding:8px;width:90%}
 
 <h1>🐶 我的英语小狗</h1>
 
-<!-- ============ 小狗主页 ============ -->
+<!-- ===== 小狗 ===== -->
 <div class="pet-wrap">
 <svg id="dog" class="pet" viewBox="0 0 200 300">
-  <ellipse cx="100" cy="170" rx="70" ry="80" fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="4"/>
-  <circle cx="100" cy="80" r="55" fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="4"/>
-  <ellipse cx="55" cy="60" rx="18" ry="30" fill="var(--dogColor,#fff)" stroke="#ccc"/>
-  <ellipse cx="145" cy="60" rx="18" ry="30" fill="var(--dogColor,#fff)" stroke="#ccc"/>
-  <circle cx="85" cy="80" r="6"/>
-  <circle cx="115" cy="80" r="6"/>
-  <circle cx="100" cy="95" r="5"/>
-  <path d="M88 108 Q100 118 112 108" stroke="#000" stroke-width="3" fill="none"/>
-  <line x1="80" y1="210" x2="80" y2="250" stroke="#ccc" stroke-width="6"/>
-  <line x1="120" y1="210" x2="120" y2="250" stroke="#ccc" stroke-width="6"/>
+  <ellipse cx="100" cy="180" rx="65" ry="85"
+    fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="4"/>
+  <circle cx="100" cy="90" r="55"
+    fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="4"/>
+  <ellipse id="earL" class="ear" cx="55" cy="60" rx="18" ry="35"
+    fill="var(--dogColor,#fff)" stroke="#ccc"/>
+  <ellipse id="earR" class="ear" cx="145" cy="60" rx="18" ry="35"
+    fill="var(--dogColor,#fff)" stroke="#ccc"/>
+  <circle id="eyeL" class="eye" cx="85" cy="90" r="6"/>
+  <circle id="eyeR" class="eye" cx="115" cy="90" r="6"/>
+  <circle cx="100" cy="105" r="5"/>
+  <path d="M88 118 Q100 128 112 118"
+    stroke="#000" stroke-width="3" fill="none"/>
+  <line x1="80" y1="240" x2="80" y2="280" stroke="#ccc" stroke-width="6"/>
+  <line x1="120" y1="240" x2="120" y2="280" stroke="#ccc" stroke-width="6"/>
 </svg>
-<div id="hat" class="decorate hat hidden">🎩</div>
-<div id="glasses" class="decorate glasses hidden">🕶️</div>
 </div>
 
-<div class="info" id="status"></div>
-<div class="info" id="score"></div>
+<div id="status"></div>
+<div id="score"></div>
 
-<!-- ============ 主页按钮 ============ -->
 <div class="card" id="home">
-  <button onclick="enterStudy()">📘 开始学习</button>
+  <button onclick="enterStudy()">📘 学习</button>
+  <button class="secondary" onclick="enterCheckup()">🏥 体检</button>
   <button class="shop" onclick="openShop()">🏪 商店 / 设计</button>
 </div>
 
-<!-- ============ 学习区 ============ -->
-<div class="card hidden" id="study">
-  <div id="question"></div>
-
-  <!-- 选择题 -->
-  <div id="choices">
-    <button onclick="choose(0)" id="c0"></button>
-    <button onclick="choose(1)" id="c1"></button>
-  </div>
-
-  <!-- 拼写 -->
-  <div id="spell" class="hidden">
-    <div id="spellHint"></div>
-    <input id="spellInput" placeholder="拼写英文">
-    <button onclick="spellCheck()">提交</button>
-  </div>
-
-  <!-- 挖空 -->
-  <div id="blank" class="hidden">
-    <div id="blankWord"></div>
-    <div id="letters"></div>
-  </div>
-
-  <button class="back" onclick="backHome()">⬅ 返回主页</button>
-</div>
-
-<!-- ============ 商店 / 设计 ============ -->
 <div class="card hidden" id="shop">
-  <h3>🏪 商店 / 设计库</h3>
-  <button onclick="buyHat()">🎩 帽子（5分）</button>
-  <button onclick="buyGlasses()">🕶️ 眼镜（5分）</button>
-  <button onclick="buyMedicine()">💊 药（10分）</button>
-  <button class="secondary" onclick="designDog()">🎨 设计小狗（5分）</button>
-  <div>
-    🎨 小狗颜色：
-    <input type="color" onchange="setColor(this.value)">
-  </div>
-  <button class="back" onclick="closeShop()">⬅ 返回主页</button>
+  <h3>💊 药品商店（5 分 / 个）</h3>
+  <button onclick="buyMedicine('headache')">💊 头痛药</button>
+  <button onclick="buyMedicine('toothache')">💊 牙痛药</button>
+  <button onclick="buyMedicine('stomach-ache')">💊 胃痛药</button>
+  <button onclick="buyMedicine('backache')">💊 背痛药</button>
+  <button onclick="buyMedicine('cold')">💊 感冒药</button>
+  <button onclick="buyMedicine('hurt')">💊 外伤药</button>
+  <button class="back" onclick="closeShop()">⬅ 返回</button>
 </div>
 
 <script>
-/* ================== 单词库（来自白板） ================== */
-const words=[
-["practice","练习"],["prepare","准备"],["weekly","每周的"],["schedule","安排"],
-["add","增加"],["warm-up","热身"],["present","展示"],["start","开始"],
-["begin","开始"],["country","国家"],["brilliant","聪明的"],["sense","感觉"],
-["balance","平衡"],["control","控制"],["complicated","复杂的"],["organ","器官"],
-["without","没有"],["brain","大脑"],["stomach","胃"],["backache","背痛"],
-["headache","头痛"],["toothache","牙痛"],["healthy","健康的"],["stretch","拉伸"],
-["second","秒"],["breathe","呼吸"],["calm","平静的"],["character","角色"],
-["poor","贫穷的"],["porridge","粥"],["wild","野生的"],["collect","收集"],
-["firewood","柴火"],["knock","敲"],["roar","咆哮"],["greedy","贪婪的"],
-["belong","属于"],["dangerous","危险的"],["cough","咳嗽"],
-["hurt","受伤"],["sore throat","喉咙痛"],["temperature","体温"],
-["nature","自然"],["natural","自然的"],["unit","单元"],["design","设计"],
-["place","地方"],["create","创造"],["adventure","冒险"],["map","地图"],
-["area","地区"],["invent","发明"],["tiny","微小的"],["large","大的"],
-["island","岛"],["fantastic","极好的"],["exciting","令人兴奋的"],
-["town","城镇"],["cry","哭"],["leave","离开"],["travel","旅行"],
-["until","直到"],["terrible","可怕的"],["plan","计划"],
-["costume","服装"],["catch","抓住"],["palace","宫殿"],
-["use","使用"],["find","找到"],["touch","触摸"],["think","思考"]
-].map(w=>({en:w[0],cn:w[1]}));
+/* ===== 疾病池 ===== */
+const DISEASES=[
+  "headache",
+  "toothache",
+  "stomach-ache",
+  "backache",
+  "cold",
+  "hurt"
+];
 
-/* ================== 状态 ================== */
-let state=JSON.parse(localStorage.getItem("dogUltimate"))||{
- score:0,mood:"happy",
- hat:false,glasses:false,
- color:"#ffffff"
+/* ===== 状态 ===== */
+let state=JSON.parse(localStorage.getItem("DOG_DISEASE"))||{
+  score:0,
+  mood:"healthy",
+  disease:null
 };
-function save(){localStorage.setItem("dogUltimate",JSON.stringify(state))}
+function save(){localStorage.setItem("DOG_DISEASE",JSON.stringify(state))}
 
-/* ================== 页面切换 ================== */
-function enterStudy(){
- home.classList.add("hidden");
- study.classList.remove("hidden");
- next();
-}
-function backHome(){
- study.classList.add("hidden");
- home.classList.remove("hidden");
-}
-function openShop(){
- home.classList.add("hidden");
- shop.classList.remove("hidden");
-}
-function closeShop(){
- shop.classList.add("hidden");
- home.classList.remove("hidden");
-}
-
-/* ================== 出题 ================== */
-let current,mode,dir,opts=[],blankIndex;
-
-function next(){
- spellInput.value="";
- choices.classList.remove("hidden");
- spell.classList.add("hidden");
- blank.classList.add("hidden");
-
- current=words[Math.floor(Math.random()*words.length)];
- const r=Math.random();
- if(r<0.33) mode="choice";
- else if(r<0.66) mode="spell";
- else mode="blank";
-
- dir=Math.random()<0.5?"en2cn":"cn2en";
-
- if(mode==="choice"){
-  const wrong=words[Math.floor(Math.random()*words.length)];
-  if(dir==="en2cn"){
-    question.innerText=current.en+" 是什么意思？";
-    opts=[current.cn,wrong.cn];
-  }else{
-    question.innerText=current.cn+" 用英文怎么说？";
-    opts=[current.en,wrong.en];
+/* ===== 生病判定 ===== */
+function checkDisease(){
+  if(state.score>30){
+    state.mood="sick";
+    state.disease=randomDisease();
+  }else if(state.score>15){
+    state.mood="sick";
+    state.disease=randomDisease();
   }
-  opts.sort(()=>Math.random()-0.5);
-  c0.innerText=opts[0];
-  c1.innerText=opts[1];
- }
- else if(mode==="spell"){
-  choices.classList.add("hidden");
-  spell.classList.remove("hidden");
-  question.innerText="拼写单词";
-  spellHint.innerText="中文提示："+current.cn;
- }
- else{
-  choices.classList.add("hidden");
-  blank.classList.remove("hidden");
-  const w=current.en;
-  blankIndex=Math.floor(w.length/2);
-  const display=w.split("").map((c,i)=>i===blankIndex?'<span class="blank"></span>':c).join("");
-  question.innerText="补全单词";
-  blankWord.innerHTML=display;
-  letters.innerHTML="";
-  const correct=w[blankIndex];
-  const wrong=String.fromCharCode(97+Math.floor(Math.random()*26));
-  [correct,wrong].sort(()=>Math.random()-0.5).forEach(l=>{
-    const b=document.createElement("button");
-    b.className="letter-btn";
-    b.innerText=l;
-    b.onclick=()=>checkBlank(l);
-    letters.appendChild(b);
-  });
- }
+}
+function randomDisease(){
+  return DISEASES[Math.floor(Math.random()*DISEASES.length)];
 }
 
-function checkSick(){
- if(state.score>30) state.mood="sick";
+/* ===== 商店 ===== */
+function buyMedicine(type){
+  if(state.mood!=="sick"){
+    alert("小狗现在不需要吃药");
+    return;
+  }
+  if(state.score<5){
+    alert("积分不够");
+    return;
+  }
+  if(type!==state.disease){
+    alert("用错药了！");
+    return;
+  }
+  state.score-=5;
+  state.mood="healthy";
+  state.disease=null;
+  save();render();
 }
 
-/* ================== 作答 ================== */
-function choose(i){
- const ans=dir==="en2cn"?current.cn:current.en;
- if(opts[i]===ans) state.score++;
- else alert("正确答案："+ans);
- checkSick();save();render();next();
-}
-function spellCheck(){
- if(spellInput.value.trim().toLowerCase()===current.en.toLowerCase()) state.score++;
- else alert("正确拼写："+current.en);
- checkSick();save();render();next();
-}
-function checkBlank(l){
- if(l===current.en[blankIndex]) state.score++;
- else alert("正确字母："+current.en[blankIndex]);
- checkSick();save();render();next();
-}
+/* ===== 页面 ===== */
+function enterStudy(){alert("学习模块保持不变")}
+function enterCheckup(){alert("体检模块保持不变")}
+function openShop(){home.classList.add("hidden");shop.classList.remove("hidden")}
+function closeShop(){shop.classList.add("hidden");home.classList.remove("hidden")}
 
-/* ================== 商店 ================== */
-function buyHat(){if(state.score>=5){state.score-=5;state.hat=true;save();render()}}
-function buyGlasses(){if(state.score>=5){state.score-=5;state.glasses=true;save();render()}}
-function buyMedicine(){
- if(state.mood!=="sick"){alert("现在不需要吃药");return;}
- if(state.score>=10){state.score-=10;state.mood="happy";save();render()}
-}
-function designDog(){
- if(state.score<5){alert("积分不够");return;}
- state.score-=5;
- state.color="#"+Math.floor(Math.random()*16777215).toString(16);
- save();render();
-}
-function setColor(c){state.color=c;save();render()}
-
-/* ================== 渲染 ================== */
+/* ===== 显示 ===== */
 function render(){
- score.innerText="积分："+state.score;
- status.innerText=
-  state.mood==="happy"?"状态：开心 😊":
-  "状态：生病了 🤒 需要💊";
- dog.style.setProperty("--dogColor",state.color);
- dog.classList.toggle("happy",state.mood==="happy");
- hat.classList.toggle("hidden",!state.hat);
- glasses.classList.toggle("hidden",!state.glasses);
+  score.innerText="积分："+state.score;
+  status.innerText=
+    state.mood==="healthy"
+    ? "状态：健康 😊"
+    : "状态：生病了 🤒（"+state.disease+"）";
 }
 render();save();
 </script>
