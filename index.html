@@ -5,35 +5,37 @@
 <title>英语小狗 · 家庭终极版</title>
 
 <style>
+/* ================== 基础 ================== */
 body{
   margin:0;
   font-family:"Comic Sans MS","PingFang SC",sans-serif;
   background:linear-gradient(#eef7ff,#ffffff);
   text-align:center;
 }
-h1{margin:10px}
+h1{margin:8px}
+.hidden{display:none}
 
-/* ===== 小狗 ===== */
-.pet-wrap{position:relative;margin:10px auto;width:260px}
+/* ================== 小狗 ================== */
+.pet-wrap{position:relative;margin:10px auto;width:300px}
 .pet{
-  width:240px;height:240px;
+  width:280px;height:280px;
   transition:transform .3s;
 }
-.pet.happy{transform:translateY(-6px)}
+.pet.happy{transform:translateY(-8px)}
 .decorate{
   position:absolute;left:50%;
   transform:translateX(-50%);
   pointer-events:none;
 }
-.hat{top:16px;font-size:36px}
-.glasses{top:96px;font-size:32px}
+.hat{top:20px;font-size:42px}
+.glasses{top:120px;font-size:36px}
 
-/* ===== 卡片 ===== */
+/* ================== 卡片 ================== */
 .card{
-  background:#fff;border-radius:16px;
-  padding:14px;width:380px;
+  background:#fff;border-radius:18px;
+  padding:14px;width:420px;
   margin:10px auto;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
 button{
   width:100%;padding:12px;
@@ -41,11 +43,30 @@ button{
   border:none;border-radius:12px;
   background:#4caf50;color:#fff;
 }
+.secondary{background:#2196f3}
 .shop{background:#ff9800}
 .back{background:#9e9e9e}
-.hidden{display:none}
 input{font-size:18px;padding:8px;width:90%}
 .info{font-size:15px;margin:4px}
+
+/* ================== 挖空动画 ================== */
+.blank{
+  display:inline-block;
+  width:24px;
+  border-bottom:3px solid #333;
+  margin:0 2px;
+  animation:pulse .8s infinite alternate;
+}
+@keyframes pulse{
+  from{opacity:.4}
+  to{opacity:1}
+}
+.letter-btn{
+  width:auto;
+  display:inline-block;
+  margin:4px;
+  padding:10px 14px;
+}
 </style>
 </head>
 
@@ -53,15 +74,19 @@ input{font-size:18px;padding:8px;width:90%}
 
 <h1>🐶 我的英语小狗</h1>
 
+<!-- ============ 小狗主页 ============ -->
 <div class="pet-wrap">
-<svg id="dog" class="pet" viewBox="0 0 200 200">
-  <circle cx="100" cy="110" r="80" fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="4"/>
-  <ellipse cx="45" cy="70" rx="25" ry="45" fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="3"/>
-  <ellipse cx="155" cy="70" rx="25" ry="45" fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="3"/>
-  <circle cx="75" cy="105" r="8"/>
-  <circle cx="125" cy="105" r="8"/>
-  <circle cx="100" cy="125" r="6"/>
-  <path d="M85 138 Q100 148 115 138" stroke="#000" stroke-width="4" fill="none"/>
+<svg id="dog" class="pet" viewBox="0 0 200 300">
+  <ellipse cx="100" cy="170" rx="70" ry="80" fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="4"/>
+  <circle cx="100" cy="80" r="55" fill="var(--dogColor,#fff)" stroke="#ccc" stroke-width="4"/>
+  <ellipse cx="55" cy="60" rx="18" ry="30" fill="var(--dogColor,#fff)" stroke="#ccc"/>
+  <ellipse cx="145" cy="60" rx="18" ry="30" fill="var(--dogColor,#fff)" stroke="#ccc"/>
+  <circle cx="85" cy="80" r="6"/>
+  <circle cx="115" cy="80" r="6"/>
+  <circle cx="100" cy="95" r="5"/>
+  <path d="M88 108 Q100 118 112 108" stroke="#000" stroke-width="3" fill="none"/>
+  <line x1="80" y1="210" x2="80" y2="250" stroke="#ccc" stroke-width="6"/>
+  <line x1="120" y1="210" x2="120" y2="250" stroke="#ccc" stroke-width="6"/>
 </svg>
 <div id="hat" class="decorate hat hidden">🎩</div>
 <div id="glasses" class="decorate glasses hidden">🕶️</div>
@@ -70,37 +95,54 @@ input{font-size:18px;padding:8px;width:90%}
 <div class="info" id="status"></div>
 <div class="info" id="score"></div>
 
-<div class="card" id="game">
+<!-- ============ 主页按钮 ============ -->
+<div class="card" id="home">
+  <button onclick="enterStudy()">📘 开始学习</button>
+  <button class="shop" onclick="openShop()">🏪 商店 / 设计</button>
+</div>
+
+<!-- ============ 学习区 ============ -->
+<div class="card hidden" id="study">
   <div id="question"></div>
 
+  <!-- 选择题 -->
   <div id="choices">
     <button onclick="choose(0)" id="c0"></button>
     <button onclick="choose(1)" id="c1"></button>
   </div>
 
+  <!-- 拼写 -->
   <div id="spell" class="hidden">
     <div id="spellHint"></div>
     <input id="spellInput" placeholder="拼写英文">
     <button onclick="spellCheck()">提交</button>
   </div>
 
-  <button class="shop" onclick="openShop()">🏪 商店</button>
+  <!-- 挖空 -->
+  <div id="blank" class="hidden">
+    <div id="blankWord"></div>
+    <div id="letters"></div>
+  </div>
+
+  <button class="back" onclick="backHome()">⬅ 返回主页</button>
 </div>
 
+<!-- ============ 商店 / 设计 ============ -->
 <div class="card hidden" id="shop">
-  <h3>🏪 宠物商店</h3>
+  <h3>🏪 商店 / 设计库</h3>
   <button onclick="buyHat()">🎩 帽子（5分）</button>
   <button onclick="buyGlasses()">🕶️ 眼镜（5分）</button>
   <button onclick="buyMedicine()">💊 药（10分）</button>
+  <button class="secondary" onclick="designDog()">🎨 设计小狗（5分）</button>
   <div>
     🎨 小狗颜色：
     <input type="color" onchange="setColor(this.value)">
   </div>
-  <button class="back" onclick="closeShop()">⬅ 返回</button>
+  <button class="back" onclick="closeShop()">⬅ 返回主页</button>
 </div>
 
 <script>
-/* ===== 单词库（来自你给的两张白板，已整理）===== */
+/* ================== 单词库（来自白板） ================== */
 const words=[
 ["practice","练习"],["prepare","准备"],["weekly","每周的"],["schedule","安排"],
 ["add","增加"],["warm-up","热身"],["present","展示"],["start","开始"],
@@ -123,23 +165,51 @@ const words=[
 ["use","使用"],["find","找到"],["touch","触摸"],["think","思考"]
 ].map(w=>({en:w[0],cn:w[1]}));
 
-let state=JSON.parse(localStorage.getItem("dogFinal"))||{
- score:0,mood:"happy",hat:false,glasses:false,color:"#ffffff"
+/* ================== 状态 ================== */
+let state=JSON.parse(localStorage.getItem("dogUltimate"))||{
+ score:0,mood:"happy",
+ hat:false,glasses:false,
+ color:"#ffffff"
 };
+function save(){localStorage.setItem("dogUltimate",JSON.stringify(state))}
 
-function save(){localStorage.setItem("dogFinal",JSON.stringify(state))}
+/* ================== 页面切换 ================== */
+function enterStudy(){
+ home.classList.add("hidden");
+ study.classList.remove("hidden");
+ next();
+}
+function backHome(){
+ study.classList.add("hidden");
+ home.classList.remove("hidden");
+}
+function openShop(){
+ home.classList.add("hidden");
+ shop.classList.remove("hidden");
+}
+function closeShop(){
+ shop.classList.add("hidden");
+ home.classList.remove("hidden");
+}
 
-/* ===== 出题 ===== */
-let current,mode,dir,opts=[];
+/* ================== 出题 ================== */
+let current,mode,dir,opts=[],blankIndex;
+
 function next(){
  spellInput.value="";
+ choices.classList.remove("hidden");
+ spell.classList.add("hidden");
+ blank.classList.add("hidden");
+
  current=words[Math.floor(Math.random()*words.length)];
- mode=Math.random()<0.5?"choice":"spell";
+ const r=Math.random();
+ if(r<0.33) mode="choice";
+ else if(r<0.66) mode="spell";
+ else mode="blank";
+
  dir=Math.random()<0.5?"en2cn":"cn2en";
 
  if(mode==="choice"){
-  choices.classList.remove("hidden");
-  spell.classList.add("hidden");
   const wrong=words[Math.floor(Math.random()*words.length)];
   if(dir==="en2cn"){
     question.innerText=current.en+" 是什么意思？";
@@ -151,11 +221,31 @@ function next(){
   opts.sort(()=>Math.random()-0.5);
   c0.innerText=opts[0];
   c1.innerText=opts[1];
- }else{
+ }
+ else if(mode==="spell"){
   choices.classList.add("hidden");
   spell.classList.remove("hidden");
   question.innerText="拼写单词";
   spellHint.innerText="中文提示："+current.cn;
+ }
+ else{
+  choices.classList.add("hidden");
+  blank.classList.remove("hidden");
+  const w=current.en;
+  blankIndex=Math.floor(w.length/2);
+  const display=w.split("").map((c,i)=>i===blankIndex?'<span class="blank"></span>':c).join("");
+  question.innerText="补全单词";
+  blankWord.innerHTML=display;
+  letters.innerHTML="";
+  const correct=w[blankIndex];
+  const wrong=String.fromCharCode(97+Math.floor(Math.random()*26));
+  [correct,wrong].sort(()=>Math.random()-0.5).forEach(l=>{
+    const b=document.createElement("button");
+    b.className="letter-btn";
+    b.innerText=l;
+    b.onclick=()=>checkBlank(l);
+    letters.appendChild(b);
+  });
  }
 }
 
@@ -163,53 +253,51 @@ function checkSick(){
  if(state.score>30) state.mood="sick";
 }
 
+/* ================== 作答 ================== */
 function choose(i){
  const ans=dir==="en2cn"?current.cn:current.en;
- if(opts[i]===ans){
-  state.score++;
-  state.mood="happy";
- }else{
-  alert("正确答案是："+ans);
- }
+ if(opts[i]===ans) state.score++;
+ else alert("正确答案："+ans);
  checkSick();save();render();next();
 }
-
 function spellCheck(){
- if(spellInput.value.trim().toLowerCase()===current.en.toLowerCase()){
-  state.score++;
-  state.mood="happy";
- }else{
-  alert("正确拼写是："+current.en);
- }
+ if(spellInput.value.trim().toLowerCase()===current.en.toLowerCase()) state.score++;
+ else alert("正确拼写："+current.en);
+ checkSick();save();render();next();
+}
+function checkBlank(l){
+ if(l===current.en[blankIndex]) state.score++;
+ else alert("正确字母："+current.en[blankIndex]);
  checkSick();save();render();next();
 }
 
-/* ===== 商店 ===== */
-function openShop(){game.classList.add("hidden");shop.classList.remove("hidden")}
-function closeShop(){shop.classList.add("hidden");game.classList.remove("hidden")}
+/* ================== 商店 ================== */
 function buyHat(){if(state.score>=5){state.score-=5;state.hat=true;save();render()}}
 function buyGlasses(){if(state.score>=5){state.score-=5;state.glasses=true;save();render()}}
 function buyMedicine(){
  if(state.mood!=="sick"){alert("现在不需要吃药");return;}
  if(state.score>=10){state.score-=10;state.mood="happy";save();render()}
 }
+function designDog(){
+ if(state.score<5){alert("积分不够");return;}
+ state.score-=5;
+ state.color="#"+Math.floor(Math.random()*16777215).toString(16);
+ save();render();
+}
 function setColor(c){state.color=c;save();render()}
 
-/* ===== 显示 ===== */
+/* ================== 渲染 ================== */
 function render(){
  score.innerText="积分："+state.score;
  status.innerText=
   state.mood==="happy"?"状态：开心 😊":
-  state.mood==="sick"?"状态：生病了 🤒 需要💊":
-  "状态：有点饿 😕";
-
+  "状态：生病了 🤒 需要💊";
  dog.style.setProperty("--dogColor",state.color);
  dog.classList.toggle("happy",state.mood==="happy");
  hat.classList.toggle("hidden",!state.hat);
  glasses.classList.toggle("hidden",!state.glasses);
 }
-
-render();next();save();
+render();save();
 </script>
 
 </body>
