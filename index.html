@@ -39,7 +39,6 @@ button:active{transform:translateY(0)}
 .shop{background:#ff9800}
 .back{background:#9e9e9e}
 .design{background:#e91e63}
-.achievement{background:#9c27b0}
 input[type=range]{width:90%;margin:8px 0}
 input[type=color]{margin:6px;width:60px;height:40px;border:none;border-radius:8px;cursor:pointer}
 input[type=text]{
@@ -64,7 +63,6 @@ input[type=text]{
   filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15));
 }
 .pet.happy{transform:translateY(-12px) scale(1.05)}
-.pet.sick{filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15)) grayscale(0.3)}
 
 /* ===== 挖空动画 ===== */
 .blank{
@@ -111,8 +109,6 @@ input[type=text]{
   grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
   gap:10px;
   margin:15px 0;
-  max-height:400px;
-  overflow-y:auto;
 }
 .design-item{
   background:#f5f5f5;
@@ -152,68 +148,6 @@ input[type=text]{
   font-weight:bold;
   color:#333;
   box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* ===== 成就系统 ===== */
-.achievements{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
-  gap:10px;
-  margin:15px 0;
-}
-.achievement-item{
-  background:#f5f5f5;
-  border-radius:12px;
-  padding:15px 10px;
-  text-align:center;
-  transition:all 0.3s;
-}
-.achievement-item.unlocked{
-  background:linear-gradient(135deg,#ffd700,#ffed4e);
-  transform:scale(1.05);
-}
-.achievement-icon{
-  font-size:32px;
-  margin-bottom:5px;
-}
-.achievement-name{
-  font-size:12px;
-  color:#666;
-}
-.achievement-item.unlocked .achievement-name{
-  color:#333;
-  font-weight:bold;
-}
-
-/* ===== 好友对战 ===== */
-.battle-zone{
-  background:#f9f9f9;
-  border-radius:12px;
-  padding:15px;
-  margin:10px 0;
-}
-.vs{
-  font-size:24px;
-  font-weight:bold;
-  color:#ff5722;
-  margin:10px 0;
-}
-
-/* ===== 统计面板 ===== */
-.stats{
-  text-align:left;
-  background:#f5f5f5;
-  padding:15px;
-  border-radius:12px;
-  margin:10px 0;
-}
-.stat-row{
-  display:flex;
-  justify-content:space-between;
-  margin:8px 0;
-  padding:8px;
-  background:#fff;
-  border-radius:8px;
 }
 </style>
 </head>
@@ -284,17 +218,13 @@ input[type=text]{
 
 <div id="status"></div>
 <div id="score"></div>
-<div id="streak" style="background:rgba(255,255,255,0.9);display:inline-block;padding:8px 16px;border-radius:20px;margin:5px;font-weight:bold;color:#ff5722"></div>
 
 <!-- ===== 主页 ===== -->
 <div class="card" id="home">
   <button onclick="enterStudy()">📘 学习模式</button>
   <button class="secondary" onclick="enterCheckup()">🏥 体检（10题）</button>
-  <button onclick="enterPK()">⚔️ PK 对战</button>
   <button class="shop" onclick="openShop()">💊 药品商店</button>
   <button class="design" onclick="openDesign()">🎨 设计小狗</button>
-  <button class="achievement" onclick="openAchievements()">🏆 成就系统</button>
-  <button class="secondary" onclick="openStats()">📊 学习统计</button>
 </div>
 
 <!-- ===== 学习 / 体检共用答题区 ===== -->
@@ -318,23 +248,6 @@ input[type=text]{
     <div id="letters"></div>
   </div>
 
-  <button class="back" onclick="backHome()">⬅ 返回主页</button>
-</div>
-
-<!-- ===== PK 对战 ===== -->
-<div class="card hidden" id="pkMode">
-  <h3 style="color:#ff5722">⚔️ PK 对战模式</h3>
-  <div class="battle-zone">
-    <div>你：<span id="myPKScore">0</span> 分</div>
-    <div class="vs">VS</div>
-    <div>对手：<span id="opponentPKScore">0</span> 分</div>
-  </div>
-  <div id="pkQuestion" style="margin:15px 0;font-size:18px"></div>
-  <div id="pkChoices">
-    <button onclick="pkChoose(0)" id="pk0"></button>
-    <button onclick="pkChoose(1)" id="pk1"></button>
-  </div>
-  <div id="pkResult" style="margin:10px 0;font-weight:bold"></div>
   <button class="back" onclick="backHome()">⬅ 返回主页</button>
 </div>
 
@@ -387,69 +300,44 @@ input[type=text]{
   <button class="back" onclick="closeGallery()">⬅ 返回设计</button>
 </div>
 
-<!-- ===== 成就系统 ===== -->
-<div class="card hidden" id="achievementPanel">
-  <h3 style="color:#9c27b0">🏆 成就系统</h3>
-  <div class="achievements" id="achievementList"></div>
-  <button class="back" onclick="closeAchievements()">⬅ 返回</button>
-</div>
-
-<!-- ===== 统计面板 ===== -->
-<div class="card hidden" id="statsPanel">
-  <h3 style="color:#2196f3">📊 学习统计</h3>
-  <div class="stats" id="statsList"></div>
-  <button onclick="resetStats()" style="background:#f44336">🔄 重置所有数据</button>
-  <button class="back" onclick="closeStats()">⬅ 返回</button>
-</div>
-
 <script>
-/* ===== 完整词库 ===== */
+/* ===== 词库（按疾病分类） ===== */
 const WORD_GROUPS = {
   headache: [
     ["practice","练习"],["prepare","准备"],["brain","大脑"],
-    ["think","思考"],["sense","感觉"],["balance","平衡"],
-    ["control","控制"],["complicated","复杂的"],["organ","器官"],
-    ["without","没有"]
+    ["think","思考"],["remember","记住"],["forget","忘记"],
+    ["study","学习"],["focus","专注"],["concentrate","集中"],
+    ["tired","疲劳的"]
   ],
   toothache: [
-    ["eat","吃"],["toothache","牙痛"],["cough","咳嗽"],
-    ["hurt","受伤"],["sore","疼痛的"],["knock","敲"],
-    ["roar","吼叫"],["greedy","贪婪的"],["belong","属于"],
-    ["touch","触摸"]
+    ["eat","吃"],["sweet","甜的"],["candy","糖果"],
+    ["brush","刷"],["tooth","牙齿"],["mouth","嘴"],
+    ["dentist","牙医"],["clean","清洁"],["healthy","健康的"],
+    ["pain","疼痛"]
   ],
   "stomach-ache": [
-    ["stomach","胃"],["stomach-ache","胃痛"],["breathe","呼吸"],
-    ["calm","平静的"],["character","性格"],["poor","贫穷的"],
-    ["porridge","粥"],["wild","野生的"],["collect","收集"],
-    ["firewood","柴火"]
+    ["stomach","胃"],["food","食物"],["digest","消化"],
+    ["hungry","饥饿的"],["full","饱的"],["sick","恶心的"],
+    ["medicine","药"],["rest","休息"],["water","水"],
+    ["careful","小心的"]
   ],
   backache: [
-    ["backache","背痛"],["weekly","每周的"],["stretch","伸展"],
-    ["schedule","安排"],["second","第二；秒"],["odd","奇怪的"],
-    ["warm","温暖"],["present","现在的"],["start","开始"],
-    ["begin","开始"]
+    ["back","背部"],["sit","坐"],["stand","站"],
+    ["posture","姿势"],["exercise","锻炼"],["stretch","伸展"],
+    ["strong","强壮的"],["weak","虚弱的"],["support","支撑"],
+    ["comfortable","舒适的"]
   ],
   cold: [
-    ["cold","感冒"],["healthy","健康的"],["temperature","体温"],
-    ["dangerous","危险的"],["country","国家"],["brilliant","聪明的"],
-    ["video","视频"],["nature","自然"],["natural","自然的"],
-    ["naturally","自然地"]
+    ["cold","感冒"],["fever","发烧"],["cough","咳嗽"],
+    ["sneeze","打喷嚏"],["tissue","纸巾"],["warm","温暖的"],
+    ["rest","休息"],["sleep","睡觉"],["temperature","体温"],
+    ["recover","恢复"]
   ],
   hurt: [
-    ["hurt","受伤"],["headache","头痛"],["throat","喉咙"],
-    ["design","设计"],["place","地方"],["create","创造"],
-    ["adventure","冒险"],["map","地图"],["area","区域"],
-    ["invent","发明"]
-  ],
-  general: [
-    ["fantastic","极好的"],["exciting","令人兴奋的"],["ago","以前"],
-    ["town","城镇"],["cry","哭"],["leave","离开"],["travel","旅行"],
-    ["until","直到"],["terrible","可怕的"],["plan","计划"],
-    ["gold","金子"],["golden","金色的"],["costume","服装"],
-    ["catch","抓住"],["palace","宫殿"],["use","使用"],
-    ["find","找到"],["think","思考"],["insect","昆虫"],
-    ["tiny","微小的"],["land","陆地"],["large","大的"],
-    ["island","岛屿"],["unit","单元"]
+    ["hurt","受伤"],["wound","伤口"],["bandage","绷带"],
+    ["cut","切伤"],["fall","跌倒"],["careful","小心的"],
+    ["dangerous","危险的"],["safe","安全的"],["protect","保护"],
+    ["heal","愈合"]
   ]
 };
 
@@ -464,22 +352,6 @@ const DISEASE_NAMES = {
   hurt: "外伤"
 };
 
-/* ===== 成就定义 ===== */
-const ACHIEVEMENTS = [
-  {id:"first_answer",name:"初次尝试",icon:"🎯",desc:"答对第一题",check:s=>s.correctCount>=1},
-  {id:"score_10",name:"入门学者",icon:"📚",desc:"获得10积分",check:s=>s.score>=10},
-  {id:"score_50",name:"勤奋学生",icon:"✨",desc:"获得50积分",check:s=>s.score>=50},
-  {id:"score_100",name:"学霸",icon:"👑",desc:"获得100积分",check:s=>s.score>=100},
-  {id:"streak_5",name:"连胜王",icon:"🔥",desc:"连续答对5题",check:s=>s.streak>=5},
-  {id:"streak_10",name:"无敌",icon:"⚡",desc:"连续答对10题",check:s=>s.streak>=10},
-  {id:"design_1",name:"设计师",icon:"🎨",desc:"保存第一个设计",check:s=>s.designs.length>=1},
-  {id:"design_5",name:"创意大师",icon:"🖌️",desc:"保存5个设计",check:s=>s.designs.length>=5},
-  {id:"cure_1",name:"康复专家",icon:"💊",desc:"治愈小狗1次",check:s=>s.cureCount>=1},
-  {id:"cure_5",name:"名医",icon:"⚕️",desc:"治愈小狗5次",check:s=>s.cureCount>=5},
-  {id:"total_100",name:"百题达人",icon:"💯",desc:"累计答题100道",check:s=>s.totalAnswered>=100},
-  {id:"pk_win_5",name:"对战高手",icon:"⚔️",desc:"PK赢5次",check:s=>s.pkWins>=5}
-];
-
 /* ===== 状态 ===== */
 let state = JSON.parse(localStorage.getItem("DOG_APP")) || {
   score: 0,
@@ -490,24 +362,12 @@ let state = JSON.parse(localStorage.getItem("DOG_APP")) || {
   earR: 0,
   eyeL: 0,
   eyeR: 0,
-  designs: [],
-  achievements: [],
-  streak: 0,
-  maxStreak: 0,
-  correctCount: 0,
-  wrongCount: 0,
-  totalAnswered: 0,
-  cureCount: 0,
-  pkWins: 0,
-  pkLosses: 0
+  designs: []
 };
 
 let mode = "study";
 let checkupCount = 0;
 let currentWords = [];
-let pkRound = 0;
-let pkMyScore = 0;
-let pkOpponentScore = 0;
 
 function save() {
   localStorage.setItem("DOG_APP", JSON.stringify(state));
@@ -537,24 +397,11 @@ function enterCheckup() {
   next();
 }
 
-function enterPK() {
-  pkRound = 0;
-  pkMyScore = 0;
-  pkOpponentScore = 0;
-  currentWords = getAllWords();
-  home.classList.add("hidden");
-  pkMode.classList.remove("hidden");
-  pkNext();
-}
-
 function backHome() {
   quiz.classList.add("hidden");
   shop.classList.add("hidden");
   designPanel.classList.add("hidden");
   gallery.classList.add("hidden");
-  achievementPanel.classList.add("hidden");
-  statsPanel.classList.add("hidden");
-  pkMode.classList.add("hidden");
   home.classList.remove("hidden");
 }
 
@@ -588,28 +435,6 @@ function viewGallery() {
 function closeGallery() {
   gallery.classList.add("hidden");
   designPanel.classList.remove("hidden");
-}
-
-function openAchievements() {
-  home.classList.add("hidden");
-  achievementPanel.classList.remove("hidden");
-  renderAchievements();
-}
-
-function closeAchievements() {
-  achievementPanel.classList.add("hidden");
-  home.classList.remove("hidden");
-}
-
-function openStats() {
-  home.classList.add("hidden");
-  statsPanel.classList.remove("hidden");
-  renderStats();
-}
-
-function closeStats() {
-  statsPanel.classList.add("hidden");
-  home.classList.remove("hidden");
 }
 
 /* ===== 工具函数 ===== */
@@ -671,78 +496,82 @@ function next() {
       const b = document.createElement("button");
       b.className = "letter-btn";
       b.innerText = l;
-            b.onclick = () => checkBlank(l);
+      b.onclick = () => checkBlank(l);
       letters.appendChild(b);
     });
   }
 }
 
-/* ===== 答题统一处理 ===== */
-function afterAnswer(isCorrect) {
-  state.totalAnswered++;
-
-  if (isCorrect) {
+/* ===== 答题处理 ===== */
+function afterAnswer(correct) {
+  if (correct) {
     state.score += 1;
-    state.correctCount++;
-    state.streak++;
-    if (state.streak > state.maxStreak) {
-      state.maxStreak = state.streak;
-    }
+    showFeedback("✅ 答对了！+" + 1 + " 分", true);
   } else {
-    state.wrongCount++;
-    state.streak = 0;
-    alert(`提示：正确答案是\n${current.en}  =  ${current.cn}`);
+    showFeedback("❌ 答错了\n正确答案是：" + current.en + " / " + current.cn, false);
   }
 
-  // 体检模式计数
   if (mode === "checkup") {
     checkupCount++;
+    quizTitle.innerText = `🏥 体检中（${DISEASE_NAMES[state.disease]}）- ${checkupCount}/10 题`;
+    
     if (checkupCount >= 10) {
-      alert("🏥 体检完成！");
-      mode = "study";
-      checkupCount = 0;
-      checkDisease();
-      save();
-      render();
-      backHome();
+      setTimeout(() => {
+        alert("✅ 体检完成！小狗已康复！");
+        state.mood = "healthy";
+        state.disease = null;
+        mode = "study";
+        checkupCount = 0;
+        save();
+        render();
+        backHome();
+      }, 1000);
       return;
     }
   }
 
-  checkDisease();
-  unlockAchievements();
-  save();
-  render();
-  next();
+  setTimeout(() => {
+    checkDisease();
+    save();
+    render();
+    next();
+  }, 1500);
 }
 
-/* ===== 各题型提交 ===== */
+function showFeedback(msg, isCorrect) {
+  const pet = document.getElementById("dog");
+  if (isCorrect) {
+    pet.classList.add("happy");
+    setTimeout(() => pet.classList.remove("happy"), 500);
+  }
+  alert(msg);
+}
+
 function choose(i) {
-  const correct =
-    opts[i] === current.en || opts[i] === current.cn;
+  const correct = opts[i] === current.en || opts[i] === current.cn;
   afterAnswer(correct);
 }
 
 function spellCheck() {
-  const val = spellInput.value.trim().toLowerCase();
-  afterAnswer(val === current.en.toLowerCase());
+  afterAnswer(spellInput.value.trim().toLowerCase() === current.en);
 }
 
-function checkBlank(letter) {
-  afterAnswer(letter === current.en[blankIdx]);
+function checkBlank(l) {
+  afterAnswer(l === current.en[blankIdx]);
 }
 
 /* ===== 生病系统 ===== */
 function checkDisease() {
-  if (state.score > 30) {
+  if (state.mood === "sick") return;
+  
+  if (state.score >= 30 && Math.random() < 0.3) {
     state.mood = "sick";
     state.disease = randomDisease();
-  } else if (state.score > 15) {
+    alert(`⚠️ 小狗生病了！\n症状：${DISEASE_NAMES[state.disease]}\n请去体检或购买对应药品！`);
+  } else if (state.score >= 15 && Math.random() < 0.15) {
     state.mood = "sick";
     state.disease = randomDisease();
-  } else {
-    state.mood = "healthy";
-    state.disease = null;
+    alert(`⚠️ 小狗生病了！\n症状：${DISEASE_NAMES[state.disease]}\n请去体检或购买对应药品！`);
   }
 }
 
@@ -750,158 +579,117 @@ function randomDisease() {
   return DISEASES[Math.floor(Math.random() * DISEASES.length)];
 }
 
-/* ===== 买药 ===== */
+/* ===== 商店 ===== */
 function buyMedicine(type) {
   if (state.mood !== "sick") {
-    alert("小狗现在不需要吃药");
+    alert("❌ 小狗现在很健康，不需要吃药！");
     return;
   }
   if (state.score < 5) {
-    alert("积分不够");
+    alert("❌ 积分不够！需要 5 积分");
     return;
   }
   if (type !== state.disease) {
-    alert("药不对症！");
+    alert(`❌ 用错药了！\n当前症状：${DISEASE_NAMES[state.disease]}\n请购买对应的药品`);
     return;
   }
+  
   state.score -= 5;
   state.mood = "healthy";
   state.disease = null;
-  state.cureCount++;
+  alert("✅ 吃药成功！小狗已康复！");
   save();
   render();
-  alert("💊 小狗恢复健康啦！");
+  closeShop();
 }
 
-/* ===== 设计小狗 ===== */
+/* ===== 设计系统 ===== */
 function loadCurrentDesign() {
   colorPicker.value = state.color;
   earLAngle.value = state.earL;
   earRAngle.value = state.earR;
   eyeLAngle.value = state.eyeL;
   eyeRAngle.value = state.eyeR;
-  updateDesignUI();
+  updateDesignPreview();
 }
 
-function updateDesignUI() {
-  earLVal.innerText = state.earL + "°";
-  earRVal.innerText = state.earR + "°";
-  eyeLVal.innerText = state.eyeL + "°";
-  eyeRVal.innerText = state.eyeR + "°";
+colorPicker.addEventListener("input", updateDesignPreview);
+earLAngle.addEventListener("input", updateDesignPreview);
+earRAngle.addEventListener("input", updateDesignPreview);
+eyeLAngle.addEventListener("input", updateDesignPreview);
+eyeRAngle.addEventListener("input", updateDesignPreview);
 
-  applyDogTransform();
+function updateDesignPreview() {
+  const color = colorPicker.value;
+  const earL = parseInt(earLAngle.value);
+  const earR = parseInt(earRAngle.value);
+  const eyeL = parseInt(eyeLAngle.value);
+  const eyeR = parseInt(eyeRAngle.value);
+  
+  earLVal.innerText = earL + "°";
+  earRVal.innerText = earR + "°";
+  eyeLVal.innerText = eyeL + "°";
+  eyeRVal.innerText = eyeR + "°";
+  
+  applyDesign(color, earL, earR, eyeL, eyeR);
 }
 
-function applyDogTransform() {
-  dog.style.setProperty("--dogColor", state.color);
-  earL.setAttribute("transform", `rotate(${state.earL} 55 65)`);
-  earR.setAttribute("transform", `rotate(${state.earR} 145 65)`);
-  eyeL.setAttribute("transform", `rotate(${state.eyeL} 85 95)`);
-  eyeR.setAttribute("transform", `rotate(${state.eyeR} 115 95)`);
+function applyDesign(color, earL, earR, eyeL, eyeR) {
+  dog.style.setProperty("--dogColor", color);
+  document.getElementById("earL").setAttribute("transform", `rotate(${earL})`);
+  document.getElementById("earR").setAttribute("transform", `rotate(${earR})`);
+  document.getElementById("eyeL").setAttribute("transform", `rotate(${eyeL})`);
+  document.getElementById("eyeR").setAttribute("transform", `rotate(${eyeR})`);
 }
 
 function saveDesign() {
   if (state.score < 2) {
-    alert("积分不够，无法保存设计");
+    alert("❌ 积分不够！需要 2 积分");
     return;
   }
-  const name = designName.value || `设计 ${state.designs.length + 1}`;
+  
+  const name = designName.value.trim() || "设计-" + (state.designs.length + 1);
+  
+  const design = {
+    name: name,
+    color: colorPicker.value,
+    earL: parseInt(earLAngle.value),
+    earR: parseInt(earRAngle.value),
+    eyeL: parseInt(eyeLAngle.value),
+    eyeR: parseInt(eyeRAngle.value)
+  };
+  
+  state.designs.push(design);
   state.score -= 2;
-  state.designs.push({
-    name,
-    color: state.color,
-    earL: state.earL,
-    earR: state.earR,
-    eyeL: state.eyeL,
-    eyeR: state.eyeR
-  });
+  state.color = design.color;
+  state.earL = design.earL;
+  state.earR = design.earR;
+  state.eyeL = design.eyeL;
+  state.eyeR = design.eyeR;
+  
+  designName.value = "";
+  alert("✅ 设计已保存！-2 积分");
   save();
-  alert("🎨 设计已保存！");
+  render();
 }
 
-/* ===== 设计库 ===== */
 function renderGallery() {
   galleryGrid.innerHTML = "";
-  state.designs.forEach((d, i) => {
-    const div = document.createElement("div");
-    div.className = "design-item";
-    div.innerHTML = `
-      <div class="design-name">${d.name}</div>
-      <button class="delete-btn">删除</button>
-    `;
-    div.onclick = () => {
-      state.color = d.color;
-      state.earL = d.earL;
-      state.earR = d.earR;
-      state.eyeL = d.eyeL;
-      state.eyeR = d.eyeR;
-      save();
-      applyDogTransform();
-      alert("已切换该设计");
-    };
-    div.querySelector(".delete-btn").onclick = e => {
-      e.stopPropagation();
-      state.designs.splice(i, 1);
-      save();
-      renderGallery();
-    };
-    galleryGrid.appendChild(div);
-  });
-}
-
-/* ===== 成就系统 ===== */
-function unlockAchievements() {
-  ACHIEVEMENTS.forEach(a => {
-    if (!state.achievements.includes(a.id) && a.check(state)) {
-      state.achievements.push(a.id);
-      alert(`🏆 解锁成就：${a.name}`);
-    }
-  });
-}
-
-function renderAchievements() {
-  achievementList.innerHTML = "";
-  ACHIEVEMENTS.forEach(a => {
-    const div = document.createElement("div");
-    div.className =
-      "achievement-item " +
-      (state.achievements.includes(a.id) ? "unlocked" : "");
-    div.innerHTML = `
-      <div class="achievement-icon">${a.icon}</div>
-      <div class="achievement-name">${a.name}</div>
-    `;
-    achievementList.appendChild(div);
-  });
-}
-
-/* ===== 统计 ===== */
-function renderStats() {
-  statsList.innerHTML = `
-    <div class="stat-row"><span>总积分</span><span>${state.score}</span></div>
-    <div class="stat-row"><span>答对题数</span><span>${state.correctCount}</span></div>
-    <div class="stat-row"><span>答错题数</span><span>${state.wrongCount}</span></div>
-    <div class="stat-row"><span>连续答对</span><span>${state.streak}</span></div>
-    <div class="stat-row"><span>最大连胜</span><span>${state.maxStreak}</span></div>
-    <div class="stat-row"><span>治愈次数</span><span>${state.cureCount}</span></div>
-  `;
-}
-
-function resetStats() {
-  if (!confirm("确定要清空所有数据吗？")) return;
-  localStorage.removeItem("DOG_APP");
-  location.reload();
-}
-
-/* ===== 渲染 ===== */
-function render() {
-  score.innerText = "积分：" + state.score;
-  status.innerText =
-    state.mood === "healthy"
-      ? "状态：健康 😊"
-      : `状态：生病了 🤒（${DISEASE_NAMES[state.disease]}）`;
-  streak.innerText = state.streak > 0 ? `🔥 连胜 ${state.streak}` : "";
-  applyDogTransform();
-}
-
-render();
-save();
+  
+  if (state.designs.length === 0) {
+    galleryGrid.innerHTML = "<p style='grid-column:1/-1;color:#999'>还没有保存的设计</p>";
+    return;
+  }
+  
+  state.designs.forEach((design, index) => {
+    const item = document.createElement("div");
+    item.className = "design-item";
+    item.innerHTML = `
+      <svg viewBox="0 0 200 360">
+        <ellipse cx="100" cy="200" rx="65" ry="90" fill="${design.color}" stroke="#888" stroke-width="3"/>
+        <circle cx="100" cy="100" r="55" fill="${design.color}" stroke="#888" stroke-width="3"/>
+        <g transform="rotate(${design.earL} 55 65)">
+          <ellipse cx="55" cy="65" rx="18" ry="38" fill="${design.color}" stroke="#888" stroke-width="2"/>
+        </g>
+        <g transform="rotate(${design.earR} 145 65)">
+          <ellipse cx="145" cy="65" rx="18" ry="38" fill="${design.color}" stroke="#888" stroke-width="2"/>
