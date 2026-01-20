@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>英语小狗 · 家庭终极版</title>
+<title>英语小狗 · 最终完整版</title>
 
 <style>
+/* ===== CSS 样式部分 ===== */
 body{
   margin:0;
   font-family:"Comic Sans MS","PingFang SC",sans-serif;
@@ -14,211 +15,114 @@ body{
   text-align:center;
   padding:20px 0;
   color:#333;
+  -webkit-tap-highlight-color: transparent; /* 移动端点击高亮去除 */
 }
 h1{margin:8px;color:#fff;text-shadow:2px 2px 4px rgba(0,0,0,0.3)}
 .hidden{display:none!important}
 
-/* ===== 卡片 ===== */
+/* 卡片容器 */
 .card{
   background:#fff;border-radius:18px;
   padding:20px;max-width:440px;
   margin:10px auto;
   box-shadow:0 8px 24px rgba(0,0,0,.2);
+  width: 90%; /* 适配手机宽度 */
+  box-sizing: border-box;
 }
+
+/* 按钮样式 */
 button{
   width:100%;padding:14px;
   margin:6px 0;font-size:16px;
   border:none;border-radius:12px;
   background:#4caf50;color:#fff;
   cursor:pointer;
-  transition:all 0.3s;
+  transition:all 0.2s;
   font-weight:bold;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
-button:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.2)}
-button:active{transform:translateY(0)}
+button:active{transform:scale(0.98);box-shadow:0 2px 4px rgba(0,0,0,0.1)}
 .secondary{background:#2196f3}
 .shop{background:#ff9800}
 .back{background:#9e9e9e}
 .design{background:#e91e63}
 .achievement{background:#9c27b0}
+
+/* 输入框控件 */
 input[type=range]{width:90%;margin:8px 0}
 input[type=color]{margin:6px;width:60px;height:40px;border:none;border-radius:8px;cursor:pointer}
 input[type=text]{
-  width:90%;padding:12px;margin:8px 0;
+  width:85%;padding:12px;margin:8px 0;
   border:2px solid #ddd;border-radius:8px;
-  font-size:16px;
+  font-size:16px;text-align:center;
 }
 
-/* ===== 小狗容器 ===== */
+/* 小狗 SVG 容器 */
 .pet-wrap{
   position:relative;
-  margin:20px auto;
-  width:320px;
-  height:380px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  margin:10px auto;
+  width:280px; height:340px;
+  display:flex; justify-content:center; align-items:center;
 }
 .pet{
-  width:280px;height:360px;
+  width:100%; height:100%;
   transition:transform .3s;
   filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15));
 }
-.pet.happy{transform:translateY(-12px) scale(1.05)}
-.pet.sick{filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15)) grayscale(0.8) sepia(0.2);}
+.pet.happy{animation: jump 0.5s ease;}
+.pet.sick{filter:grayscale(0.8) sepia(0.2);}
 
-/* ===== 挖空动画 ===== */
+@keyframes jump {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px) scale(1.1); }
+  100% { transform: translateY(0); }
+}
+
+/* 填空题样式 */
 .blank{
-  display:inline-block;
-  width:24px;
-  border-bottom:3px solid #333;
-  margin:0 2px;
-  animation:pulse .8s infinite alternate;
+  display:inline-block; width:24px; border-bottom:3px solid #333;
+  margin:0 2px; animation:pulse .8s infinite alternate;
 }
-@keyframes pulse{
-  from{opacity:.4}
-  to{opacity:1}
-}
+@keyframes pulse{from{opacity:.4} to{opacity:1}}
 .letter-btn{
-  width:auto;
-  display:inline-block;
-  margin:4px;
-  padding:12px 18px;
-  font-size:18px;
-  font-weight:bold;
+  width:auto; display:inline-block; margin:4px;
+  padding:10px 16px; font-size:18px; font-weight:bold;
   background: #673ab7;
 }
 
-/* ===== 设计面板 ===== */
-.design-controls{
-  text-align:left;
-  margin:10px 0;
-}
-.design-controls label{
-  display:block;
-  margin:12px 0 4px 0;
-  font-weight:bold;
-  color:#333;
-}
-.range-value{
-  display:inline-block;
-  margin-left:10px;
-  color:#666;
-  font-weight:bold;
+/* 状态条 */
+#status-bar { margin: 10px 0; }
+.badge {
+  background:rgba(255,255,255,0.95);
+  display:inline-block; padding:8px 16px;
+  border-radius:20px; margin:4px;
+  font-weight:bold; color:#333; font-size: 14px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* ===== 设计库 ===== */
+/* 设计库网格 */
 .design-gallery{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
-  gap:10px;
-  margin:15px 0;
-  max-height:400px;
-  overflow-y:auto;
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  gap:10px; margin:15px 0; max-height:300px; overflow-y:auto;
 }
 .design-item{
-  background:#f5f5f5;
-  border-radius:12px;
-  padding:10px;
-  cursor:pointer;
-  transition:all 0.3s;
-  border:3px solid transparent;
+  background:#f5f5f5; border-radius:8px; padding:8px;
+  cursor:pointer; border:2px solid transparent;
 }
-.design-item:hover{
-  border-color:#e91e63;
-  transform:scale(1.05);
-}
-.design-item svg{
-  width:100%;
-  height:auto;
-}
-.design-name{
-  font-size:12px;
-  margin-top:5px;
-  color:#666;
-}
-.delete-btn{
-  background:#f44336;
-  padding:4px 8px;
-  font-size:12px;
-  margin-top:4px;
-}
+.design-item:hover{border-color:#e91e63;}
 
-/* ===== 状态显示 ===== */
-#status, #score{
-  background:rgba(255,255,255,0.9);
-  display:inline-block;
-  padding:10px 20px;
-  border-radius:20px;
-  margin:5px;
-  font-weight:bold;
-  color:#333;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* ===== 成就系统 ===== */
-.achievements{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
-  gap:10px;
-  margin:15px 0;
-}
-.achievement-item{
-  background:#f5f5f5;
-  border-radius:12px;
-  padding:15px 10px;
-  text-align:center;
-  transition:all 0.3s;
-  opacity: 0.5;
-}
-.achievement-item.unlocked{
-  background:linear-gradient(135deg,#ffd700,#ffed4e);
-  transform:scale(1.05);
-  opacity: 1;
-  box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
-}
-.achievement-icon{
-  font-size:32px;
-  margin-bottom:5px;
-}
-.achievement-name{
-  font-size:12px;
-  color:#666;
-}
-.achievement-item.unlocked .achievement-name{
-  color:#333;
-  font-weight:bold;
-}
-
-/* ===== 好友对战 ===== */
+/* PK 区域 */
 .battle-zone{
-  background:#f9f9f9;
-  border-radius:12px;
-  padding:15px;
-  margin:10px 0;
+  background:#f0f4f8; border-radius:12px; padding:15px;
+  display:flex; justify-content: space-around; align-items: center;
+  margin-bottom: 15px;
 }
-.vs{
-  font-size:24px;
-  font-weight:bold;
-  color:#ff5722;
-  margin:10px 0;
-}
+.vs-text{ font-size: 24px; font-weight: 900; color: #ff5722; font-style: italic; }
 
-/* ===== 统计面板 ===== */
-.stats{
-  text-align:left;
-  background:#f5f5f5;
-  padding:15px;
-  border-radius:12px;
-  margin:10px 0;
-}
+/* 统计行 */
 .stat-row{
-  display:flex;
-  justify-content:space-between;
-  margin:8px 0;
-  padding:8px;
-  background:#fff;
-  border-radius:8px;
+  display:flex; justify-content:space-between;
+  padding:10px; border-bottom:1px solid #eee;
 }
 </style>
 </head>
@@ -229,761 +133,586 @@ input[type=text]{
 
 <div class="pet-wrap">
 <svg id="dog" class="pet" viewBox="0 0 200 360">
-  <ellipse cx="100" cy="200" rx="65" ry="90" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="3"/>
-   
-  <circle cx="100" cy="100" r="55" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="3"/>
-   
-  <g id="earL_g" transform-origin="55 65">
-    <ellipse cx="55" cy="65" rx="18" ry="38" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
-    <ellipse cx="55" cy="70" rx="10" ry="20" fill="#ffb6c1"/>
-  </g>
-   
-  <g id="earR_g" transform-origin="145 65">
-    <ellipse cx="145" cy="65" rx="18" ry="38" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
-    <ellipse cx="145" cy="70" rx="10" ry="20" fill="#ffb6c1"/>
-  </g>
-   
-  <g id="eyeL_g" transform-origin="85 95">
-    <ellipse cx="85" cy="95" rx="8" ry="10" fill="#fff" stroke="#333" stroke-width="1"/>
-    <circle cx="85" cy="97" r="5" fill="#000"/>
-    <circle cx="86" cy="95" r="2" fill="#fff"/>
-  </g>
-   
-  <g id="eyeR_g" transform-origin="115 95">
-    <ellipse cx="115" cy="95" rx="8" ry="10" fill="#fff" stroke="#333" stroke-width="1"/>
-    <circle cx="115" cy="97" r="5" fill="#000"/>
-    <circle cx="116" cy="95" r="2" fill="#fff"/>
-  </g>
-   
-  <ellipse cx="100" cy="115" rx="8" ry="6" fill="#000"/>
-   
-  <path d="M88 125 Q100 135 112 125" stroke="#000" stroke-width="3" fill="none"/>
-   
-  <rect x="70" y="270" width="12" height="70" rx="6" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
-  <rect x="118" y="270" width="12" height="70" rx="6" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
-   
-  <rect x="55" y="270" width="12" height="70" rx="6" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
-  <rect x="133" y="270" width="12" height="70" rx="6" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
-   
-  <path d="M155 210 Q175 200 180 180" stroke="var(--dogColor,#fff)" stroke-width="15" fill="none" stroke-linecap="round"/>
-   
-  <g id="accessory">
-    <rect x="75" y="145" width="50" height="8" rx="4" fill="#ff1744"/>
-    <circle cx="100" cy="149" r="5" fill="#ffd700" stroke="#ff1744" stroke-width="2"/>
+  <g id="dogBodyGroup">
+    <ellipse cx="100" cy="200" rx="65" ry="90" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="3"/>
+    <circle cx="100" cy="100" r="55" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="3"/>
+    
+    <g id="earL_g" transform-origin="55 65">
+      <ellipse cx="55" cy="65" rx="18" ry="38" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
+      <ellipse cx="55" cy="70" rx="10" ry="20" fill="#ffb6c1"/>
+    </g>
+    <g id="earR_g" transform-origin="145 65">
+      <ellipse cx="145" cy="65" rx="18" ry="38" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
+      <ellipse cx="145" cy="70" rx="10" ry="20" fill="#ffb6c1"/>
+    </g>
+    
+    <g id="eyeL_g" transform-origin="85 95">
+      <ellipse cx="85" cy="95" rx="8" ry="10" fill="#fff" stroke="#333" stroke-width="1"/>
+      <circle cx="85" cy="97" r="5" fill="#000"/>
+    </g>
+    <g id="eyeR_g" transform-origin="115 95">
+      <ellipse cx="115" cy="95" rx="8" ry="10" fill="#fff" stroke="#333" stroke-width="1"/>
+      <circle cx="115" cy="97" r="5" fill="#000"/>
+    </g>
+    
+    <ellipse cx="100" cy="115" rx="8" ry="6" fill="#000"/>
+    <path d="M88 125 Q100 135 112 125" stroke="#000" stroke-width="3" fill="none"/>
+    
+    <rect x="70" y="270" width="12" height="70" rx="6" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
+    <rect x="118" y="270" width="12" height="70" rx="6" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
+    <rect x="55" y="270" width="12" height="70" rx="6" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
+    <rect x="133" y="270" width="12" height="70" rx="6" fill="var(--dogColor,#fff)" stroke="#888" stroke-width="2"/>
+    
+    <path d="M155 210 Q175 200 180 180" stroke="var(--dogColor,#fff)" stroke-width="15" fill="none" stroke-linecap="round"/>
   </g>
 </svg>
 </div>
 
-<div id="status"></div>
-<div id="score"></div>
-<div id="streak" style="background:rgba(255,255,255,0.9);display:inline-block;padding:8px 16px;border-radius:20px;margin:5px;font-weight:bold;color:#ff5722"></div>
+<div id="status-bar">
+  <div class="badge" id="scoreBadge">💰 0</div>
+  <div class="badge" id="streakBadge">🔥 0</div>
+  <div class="badge" id="healthBadge">❤️ 健康</div>
+</div>
 
 <div class="card" id="home">
-  <button onclick="enterStudy()">📘 学习模式</button>
-  <button class="secondary" onclick="enterCheckup()">🏥 体检（10题）</button>
-  <button onclick="enterPK()">⚔️ PK 对战</button>
-  <button class="shop" onclick="openShop()">💊 药品商店</button>
-  <button class="design" onclick="openDesign()">🎨 设计小狗</button>
-  <button class="achievement" onclick="openAchievements()">🏆 成就系统</button>
-  <button class="secondary" onclick="openStats()">📊 学习统计</button>
+  <button onclick="app.startStudy()">📘 学习模式</button>
+  <button class="secondary" onclick="app.startCheckup()">🏥 小狗体检 (10题)</button>
+  <button onclick="app.startPK()">⚔️ 好友 PK</button>
+  <button class="shop" onclick="app.openShop()">💊 药品商店</button>
+  <button class="design" onclick="app.openDesign()">🎨 设计小狗</button>
+  <button class="achievement" onclick="app.openAchievements()">🏆 成就系统</button>
+  <button class="secondary" onclick="app.openStats()">📊 学习统计</button>
 </div>
 
 <div class="card hidden" id="quiz">
-  <div id="quizTitle" style="font-size:20px;font-weight:bold;margin-bottom:15px"></div>
-  <div id="question" style="font-size:18px;margin:15px 0;color:#333"></div>
-
-  <div id="choices">
-    <button onclick="choose(0)" id="c0"></button>
-    <button onclick="choose(1)" id="c1"></button>
+  <h3 id="quizTitle"></h3>
+  <div id="questionText" style="font-size:18px;margin:20px 0;color:#555;"></div>
+  
+  <div id="choiceArea"></div>
+  
+  <div id="spellArea" class="hidden">
+    <input type="text" id="spellInput" placeholder="输入单词...">
+    <button onclick="app.checkSpell()">提交</button>
   </div>
 
-  <div id="spell" class="hidden">
-    <div id="spellHint" style="margin:10px 0;font-size:16px;color:#666"></div>
-    <input type="text" id="spellInput" placeholder="请输入英文拼写">
-    <button onclick="spellCheck()">✅ 提交答案</button>
+  <div id="blankArea" class="hidden">
+    <div id="blankWordDisplay" style="font-size:24px;margin:15px;letter-spacing:2px"></div>
+    <div id="letterButtons"></div>
   </div>
 
-  <div id="blank" class="hidden">
-    <div id="blankWord" style="font-size:24px;margin:15px 0;letter-spacing:2px"></div>
-    <div id="letters"></div>
-  </div>
-
-  <button class="back" onclick="backHome()">⬅ 返回主页</button>
+  <button class="back" onclick="app.goHome()">⬅ 返回主页</button>
 </div>
 
-<div class="card hidden" id="pkMode">
-  <h3 style="color:#ff5722">⚔️ PK 对战模式</h3>
+<div class="card hidden" id="pkPage">
+  <h3>⚔️ PK 对战</h3>
   <div class="battle-zone">
-    <div>你：<span id="myPKScore">0</span> 分</div>
-    <div class="vs">VS</div>
-    <div>对手：<span id="opponentPKScore">0</span> 分</div>
+    <div>
+      <div>我</div>
+      <div style="font-size:20px;font-weight:bold" id="pkMyScore">0</div>
+    </div>
+    <div class="vs-text">VS</div>
+    <div>
+      <div>对手</div>
+      <div style="font-size:20px;font-weight:bold" id="pkOpScore">0</div>
+    </div>
   </div>
-  <div id="pkQuestion" style="margin:15px 0;font-size:18px"></div>
-  <div id="pkChoices">
-    <button onclick="pkChoose(0)" id="pk0"></button>
-    <button onclick="pkChoose(1)" id="pk1"></button>
-  </div>
-  <div id="pkResult" style="margin:10px 0;font-weight:bold"></div>
-  <button class="back" onclick="backHome()">⬅ 返回主页</button>
+  <div id="pkQuestion" style="margin:10px 0"></div>
+  <div id="pkOptions"></div>
+  <div id="pkMessage" style="color:red;font-weight:bold;height:24px"></div>
+  <button class="back" onclick="app.goHome()">退出 PK</button>
 </div>
 
-<div class="card hidden" id="shop">
-  <h3 style="color:#ff9800">💊 药品商店（5 积分 / 个）</h3>
-  <p style="color:#666;font-size:14px">请根据症状购买对应的药品</p>
-  <button onclick="buyMedicine('headache')">💊 头痛药 (Headache)</button>
-  <button onclick="buyMedicine('toothache')">💊 牙痛药 (Toothache)</button>
-  <button onclick="buyMedicine('stomach-ache')">💊 胃痛药 (Stomach-ache)</button>
-  <button onclick="buyMedicine('backache')">💊 背痛药 (Backache)</button>
-  <button onclick="buyMedicine('cold')">💊 感冒药 (Cold)</button>
-  <button onclick="buyMedicine('hurt')">💊 外伤药 (Hurt)</button>
-  <button class="back" onclick="closeShop()">⬅ 返回</button>
+<div class="card hidden" id="shopPage">
+  <h3 style="color:#ff9800">💊 药品商店 (5积分/个)</h3>
+  <div id="medicineList"></div>
+  <button class="back" onclick="app.goHome()">⬅ 返回</button>
 </div>
 
-<div class="card hidden" id="designPanel">
-  <h3 style="color:#e91e63">🎨 设计你的小狗（2 积分）</h3>
-   
-  <div class="design-controls">
-    <label>🎨 小狗颜色:</label>
-    <input type="color" id="colorPicker" value="#ffffff" oninput="previewDesign()">
-     
-    <label>👂 左耳角度: <span class="range-value" id="earLVal">0°</span></label>
-    <input type="range" id="earLAngle" min="-45" max="45" value="0" step="1" oninput="previewDesign()">
-     
-    <label>👂 右耳角度: <span class="range-value" id="earRVal">0°</span></label>
-    <input type="range" id="earRAngle" min="-45" max="45" value="0" step="1" oninput="previewDesign()">
-     
-    <label>👁️ 左眼角度: <span class="range-value" id="eyeLVal">0°</span></label>
-    <input type="range" id="eyeLAngle" min="-20" max="20" value="0" step="1" oninput="previewDesign()">
-     
-    <label>👁️ 右眼角度: <span class="range-value" id="eyeRVal">0°</span></label>
-    <input type="range" id="eyeRAngle" min="-20" max="20" value="0" step="1" oninput="previewDesign()">
-     
-    <label>💾 设计名称:</label>
-    <input type="text" id="designName" placeholder="给你的设计起个名字">
+<div class="card hidden" id="designPage">
+  <h3 style="color:#e91e63">🎨 设计小狗 (保存需2积分)</h3>
+  <div style="text-align:left">
+    <label>毛色: <input type="color" id="set_color" oninput="app.previewDesign()"></label><br>
+    <label>左耳: <input type="range" id="set_earL" min="-45" max="45" oninput="app.previewDesign()"></label><br>
+    <label>右耳: <input type="range" id="set_earR" min="-45" max="45" oninput="app.previewDesign()"></label><br>
+    <label>左眼: <input type="range" id="set_eyeL" min="-20" max="20" oninput="app.previewDesign()"></label><br>
+    <label>右眼: <input type="range" id="set_eyeR" min="-20" max="20" oninput="app.previewDesign()"></label><br>
+    <input type="text" id="designName" placeholder="设计名称">
   </div>
-   
-  <button onclick="saveDesign()">💾 保存到设计库（-2积分）</button>
-  <button class="secondary" onclick="viewGallery()">🖼️ 查看设计库</button>
-  <button class="back" onclick="closeDesign()">⬅ 返回</button>
+  <button onclick="app.saveDesign()">💾 保存并应用</button>
+  <button class="secondary" onclick="app.showGallery()">📂 我的设计库</button>
+  <button class="back" onclick="app.goHome()">⬅ 返回</button>
 </div>
 
-<div class="card hidden" id="gallery">
-  <h3 style="color:#e91e63">🖼️ 我的设计库</h3>
+<div class="card hidden" id="galleryPage">
+  <h3>📂 我的设计库</h3>
   <div id="galleryGrid" class="design-gallery"></div>
-  <button class="back" onclick="closeGallery()">⬅ 返回设计</button>
+  <button class="back" onclick="app.openDesign()">⬅ 返回设计</button>
 </div>
 
-<div class="card hidden" id="achievementPanel">
-  <h3 style="color:#9c27b0">🏆 成就系统</h3>
-  <div class="achievements" id="achievementList"></div>
-  <button class="back" onclick="closeAchievements()">⬅ 返回</button>
+<div class="card hidden" id="achievementPage">
+  <h3 style="color:#9c27b0">🏆 成就墙</h3>
+  <div id="achieveList" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+  <button class="back" onclick="app.goHome()">⬅ 返回</button>
 </div>
 
-<div class="card hidden" id="statsPanel">
-  <h3 style="color:#2196f3">📊 学习统计</h3>
-  <div class="stats" id="statsList"></div>
-  <button onclick="resetStats()" style="background:#f44336">🔄 重置所有数据</button>
-  <button class="back" onclick="closeStats()">⬅ 返回</button>
+<div class="card hidden" id="statsPage">
+  <h3 style="color:#2196f3">📊 学习数据</h3>
+  <div id="statsContent"></div>
+  <button style="background:#f44336" onclick="app.resetData()">🗑️ 重置所有数据</button>
+  <button class="back" onclick="app.goHome()">⬅ 返回</button>
 </div>
 
 <script>
-/* ===== 完整词库 ===== */
-const WORD_GROUPS = {
-  headache: [
-    ["practice","练习"],["prepare","准备"],["brain","大脑"],
-    ["think","思考"],["sense","感觉"],["balance","平衡"],
-    ["control","控制"],["complicated","复杂的"],["organ","器官"],
-    ["without","没有"]
-  ],
-  toothache: [
-    ["eat","吃"],["toothache","牙痛"],["cough","咳嗽"],
-    ["hurt","受伤"],["sore","疼痛的"],["knock","敲"],
-    ["roar","吼叫"],["greedy","贪婪的"],["belong","属于"],
-    ["touch","触摸"]
-  ],
-  "stomach-ache": [
-    ["stomach","胃"],["stomach-ache","胃痛"],["breathe","呼吸"],
-    ["calm","平静的"],["character","性格"],["poor","贫穷的"],
-    ["porridge","粥"],["wild","野生的"],["collect","收集"],
-    ["firewood","柴火"]
-  ],
-  backache: [
-    ["backache","背痛"],["weekly","每周的"],["stretch","伸展"],
-    ["schedule","安排"],["second","第二；秒"],["odd","奇怪的"],
-    ["warm","温暖"],["present","现在的"],["start","开始"],
-    ["begin","开始"]
-  ],
-  cold: [
-    ["cold","感冒"],["healthy","健康的"],["temperature","体温"],
-    ["dangerous","危险的"],["country","国家"],["brilliant","聪明的"],
-    ["video","视频"],["nature","自然"],["natural","自然的"],
-    ["naturally","自然地"]
-  ],
-  hurt: [
-    ["hurt","受伤"],["headache","头痛"],["throat","喉咙"],
-    ["design","设计"],["place","地方"],["create","创造"],
-    ["adventure","冒险"],["map","地图"],["area","区域"],
-    ["invent","发明"]
-  ],
+/**
+ * 英语小狗 - 核心逻辑 (修复版)
+ * 确保这段 JS 代码是完整的，没有中断
+ */
+
+// 1. 数据定义
+const WORDS = {
+  headache: [["practice","练习"],["brain","大脑"],["pain","疼痛"],["rest","休息"]],
+  toothache: [["tooth","牙齿"],["candy","糖果"],["brush","刷"],["dentist","牙医"]],
+  cold: [["cold","感冒"],["hot","热"],["water","水"],["mask","口罩"]],
+  hurt: [["hurt","受伤"],["hospital","医院"],["careful","小心"],["run","跑"]],
   general: [
-    ["fantastic","极好的"],["exciting","令人兴奋的"],["ago","以前"],
-    ["town","城镇"],["cry","哭"],["leave","离开"],["travel","旅行"],
-    ["until","直到"],["terrible","可怕的"],["plan","计划"],
-    ["gold","金子"],["golden","金色的"],["costume","服装"],
-    ["catch","抓住"],["palace","宫殿"],["use","使用"],
-    ["find","找到"],["think","思考"],["insect","昆虫"],
-    ["tiny","微小的"],["land","陆地"],["large","大的"],
-    ["island","岛屿"],["unit","单元"]
+    ["apple","苹果"],["banana","香蕉"],["cat","猫"],["dog","狗"],
+    ["happy","快乐"],["friend","朋友"],["school","学校"],["book","书"],
+    ["jump","跳"],["play","玩"],["red","红色"],["blue","蓝色"]
   ]
 };
 
-const DISEASES = ["headache","toothache","stomach-ache","backache","cold","hurt"];
-
-const DISEASE_NAMES = {
-  headache: "头痛",
-  toothache: "牙痛",
-  "stomach-ache": "胃痛",
-  backache: "背痛",
-  cold: "感冒",
-  hurt: "外伤"
+const DISEASES = {
+  headache: "头痛", toothache: "牙痛", cold: "感冒", hurt: "外伤"
 };
 
-/* ===== 成就定义 ===== */
 const ACHIEVEMENTS = [
-  {id:"first_answer",name:"初次尝试",icon:"🎯",desc:"答对第一题",check:s=>s.correctCount>=1},
-  {id:"score_10",name:"入门学者",icon:"📚",desc:"获得10积分",check:s=>s.score>=10},
-  {id:"score_50",name:"勤奋学生",icon:"✨",desc:"获得50积分",check:s=>s.score>=50},
-  {id:"score_100",name:"学霸",icon:"👑",desc:"获得100积分",check:s=>s.score>=100},
-  {id:"streak_5",name:"连胜王",icon:"🔥",desc:"连续答对5题",check:s=>s.streak>=5},
-  {id:"streak_10",name:"无敌",icon:"⚡",desc:"连续答对10题",check:s=>s.streak>=10},
-  {id:"design_1",name:"设计师",icon:"🎨",desc:"保存第一个设计",check:s=>s.designs.length>=1},
-  {id:"design_5",name:"创意大师",icon:"🖌️",desc:"保存5个设计",check:s=>s.designs.length>=5},
-  {id:"cure_1",name:"康复专家",icon:"💊",desc:"治愈小狗1次",check:s=>s.cureCount>=1},
-  {id:"cure_5",name:"名医",icon:"⚕️",desc:"治愈小狗5次",check:s=>s.cureCount>=5},
-  {id:"total_100",name:"百题达人",icon:"💯",desc:"累计答题100道",check:s=>s.totalAnswered>=100},
-  {id:"pk_win_5",name:"对战高手",icon:"⚔️",desc:"PK赢5次",check:s=>s.pkWins>=5}
+  {id:"first", name:"初出茅庐", desc:"答对第1题", check:s=>s.correct>=1},
+  {id:"rich", name:"小富翁", desc:"拥有20积分", check:s=>s.score>=20},
+  {id:"streak10", name:"连胜大师", desc:"连续答对10题", check:s=>s.streak>=10},
+  {id:"doctor", name:"神医", desc:"治愈小狗3次", check:s=>s.cured>=3},
+  {id:"designer", name:"艺术家", desc:"保存3个设计", check:s=>s.designs.length>=3}
 ];
 
-/* ===== 状态 ===== */
-let state = JSON.parse(localStorage.getItem("DOG_APP")) || {
-  score: 0,
-  mood: "healthy",
-  disease: null,
-  color: "#ffffff",
-  earL: 0,
-  earR: 0,
-  eyeL: 0,
-  eyeR: 0,
-  designs: [],
-  achievements: [],
-  streak: 0,
-  maxStreak: 0,
-  correctCount: 0,
-  wrongCount: 0,
-  totalAnswered: 0,
-  cureCount: 0,
-  pkWins: 0,
-  pkLosses: 0
-};
+// 2. 应用程序对象 (命名空间)
+const app = {
+  state: {
+    score: 0,
+    mood: "healthy", // healthy, sick
+    disease: null,
+    streak: 0,
+    maxStreak: 0,
+    correct: 0,
+    total: 0,
+    cured: 0,
+    designs: [],
+    unlockedAch: [],
+    style: {color:"#ffffff", earL:0, earR:0, eyeL:0, eyeR:0}
+  },
 
-let mode = "study";
-let checkupCount = 0;
-let currentWords = [];
-let pkRound = 0;
-let pkMyScore = 0;
-let pkOpponentScore = 0;
-let current, modeQ, opts = [], blankIdx;
-let pkCurrent, pkOpts = [];
+  // 运行时临时变量
+  temp: {
+    mode: null, // study, checkup, pk
+    currentWord: null,
+    qCount: 0,
+    pkRound: 0,
+    pkMyScore: 0,
+    pkOpScore: 0
+  },
 
-function save() {
-  localStorage.setItem("DOG_APP", JSON.stringify(state));
-  updateUI();
-}
-
-/* ===== 页面切换 ===== */
-function enterStudy() {
-  mode = "study";
-  currentWords = getAllWords();
-  document.getElementById("quizTitle").innerText = "📘 学习模式";
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("quiz").classList.remove("hidden");
-  next();
-}
-
-function enterCheckup() {
-  if (state.mood !== "sick") {
-    alert("小狗很健康，不需要体检！");
-    return;
-  }
-  mode = "checkup";
-  checkupCount = 0;
-  currentWords = WORD_GROUPS[state.disease].map(w => ({en: w[0], cn: w[1]}));
-  document.getElementById("quizTitle").innerText = `🏥 体检中（${DISEASE_NAMES[state.disease]}）`;
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("quiz").classList.remove("hidden");
-  next();
-}
-
-function enterPK() {
-  pkRound = 0;
-  pkMyScore = 0;
-  pkOpponentScore = 0;
-  currentWords = getAllWords();
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("pkMode").classList.remove("hidden");
-  updatePKUI();
-  pkNext();
-}
-
-function backHome() {
-  document.getElementById("quiz").classList.add("hidden");
-  document.getElementById("shop").classList.add("hidden");
-  document.getElementById("designPanel").classList.add("hidden");
-  document.getElementById("gallery").classList.add("hidden");
-  document.getElementById("achievementPanel").classList.add("hidden");
-  document.getElementById("statsPanel").classList.add("hidden");
-  document.getElementById("pkMode").classList.add("hidden");
-  document.getElementById("home").classList.remove("hidden");
-  updateUI();
-}
-
-function openShop() {
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("shop").classList.remove("hidden");
-}
-
-function closeShop() {
-  document.getElementById("shop").classList.add("hidden");
-  document.getElementById("home").classList.remove("hidden");
-}
-
-function openDesign() {
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("designPanel").classList.remove("hidden");
-  loadCurrentDesign();
-}
-
-function closeDesign() {
-  document.getElementById("designPanel").classList.add("hidden");
-  document.getElementById("home").classList.remove("hidden");
-  updateDog();
-}
-
-function viewGallery() {
-  document.getElementById("designPanel").classList.add("hidden");
-  document.getElementById("gallery").classList.remove("hidden");
-  renderGallery();
-}
-
-function closeGallery() {
-  document.getElementById("gallery").classList.add("hidden");
-  document.getElementById("designPanel").classList.remove("hidden");
-}
-
-function openAchievements() {
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("achievementPanel").classList.remove("hidden");
-  renderAchievements();
-}
-
-function closeAchievements() {
-  document.getElementById("achievementPanel").classList.add("hidden");
-  document.getElementById("home").classList.remove("hidden");
-}
-
-function openStats() {
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("statsPanel").classList.remove("hidden");
-  renderStats();
-}
-
-function closeStats() {
-  document.getElementById("statsPanel").classList.add("hidden");
-  document.getElementById("home").classList.remove("hidden");
-}
-
-/* ===== 工具函数 ===== */
-function getAllWords() {
-  let all = [];
-  for (let disease in WORD_GROUPS) {
-    all = all.concat(WORD_GROUPS[disease].map(w => ({en: w[0], cn: w[1]})));
-  }
-  return all;
-}
-
-/* ===== 出题逻辑 ===== */
-function next() {
-  document.getElementById("spellInput").value = "";
-  document.getElementById("choices").classList.remove("hidden");
-  document.getElementById("spell").classList.add("hidden");
-  document.getElementById("blank").classList.add("hidden");
-
-  if (currentWords.length === 0) currentWords = getAllWords();
-  
-  current = currentWords[Math.floor(Math.random() * currentWords.length)];
-  const r = Math.random();
-  if (r < 0.33) modeQ = "choice";
-  else if (r < 0.66) modeQ = "spell";
-  else modeQ = "blank";
-
-  // 1. 选择题
-  if (modeQ === "choice") {
-    const wrong = currentWords[Math.floor(Math.random() * currentWords.length)];
-    const en2cn = Math.random() < 0.5;
-    document.getElementById("question").innerText = en2cn 
-      ? `"${current.en}" 是什么意思？`
-      : `"${current.cn}" 用英文怎么说？`;
-    const correct = en2cn ? current.cn : current.en;
-    const wrongAns = en2cn ? wrong.cn : wrong.en;
-    opts = [correct, wrongAns === correct ? "错误选项" : wrongAns].sort(() => Math.random() - 0.5);
-    document.getElementById("c0").innerText = opts[0];
-    document.getElementById("c1").innerText = opts[1];
-    document.getElementById("c0").onclick = () => choose(0);
-    document.getElementById("c1").onclick = () => choose(1);
-  }
-  // 2. 拼写题
-  else if (modeQ === "spell") {
-    document.getElementById("choices").classList.add("hidden");
-    document.getElementById("spell").classList.remove("hidden");
-    document.getElementById("question").innerText = "拼写单词";
-    document.getElementById("spellHint").innerText = "中文提示：" + current.cn;
-  }
-  // 3. 填空题
-  else {
-    document.getElementById("choices").classList.add("hidden");
-    document.getElementById("blank").classList.remove("hidden");
-    document.getElementById("question").innerText = "补全单词";
-    const w = current.en;
-    blankIdx = Math.floor(Math.random() * w.length); // 随机挖空
-    document.getElementById("blankWord").innerHTML = w.split("").map((c, i) => 
-      i === blankIdx ? '<span class="blank"></span>' : c
-    ).join("");
-    document.getElementById("letters").innerHTML = "";
-    
-    const correct = w[blankIdx];
-    let wrong = String.fromCharCode(97 + Math.floor(Math.random() * 26));
-    while(wrong === correct) wrong = String.fromCharCode(97 + Math.floor(Math.random() * 26));
-
-    [correct, wrong].sort(() => Math.random() - 0.5).forEach(l => {
-      const b = document.createElement("button");
-      b.className = "letter-btn";
-      b.innerText = l;
-      b.onclick = () => checkAns(l === correct); // 修复了这里
-      document.getElementById("letters").appendChild(b);
-    });
-  }
-}
-
-function choose(idx) {
-  const en2cn = document.getElementById("question").innerText.includes("意思");
-  const correct = en2cn ? current.cn : current.en;
-  checkAns(opts[idx] === correct);
-}
-
-function spellCheck() {
-  const input = document.getElementById("spellInput").value.trim().toLowerCase();
-  checkAns(input === current.en.toLowerCase());
-}
-
-/* ===== 核心判断逻辑 ===== */
-function checkAns(isCorrect) {
-  state.totalAnswered++;
-  
-  if (isCorrect) {
-    state.score++;
-    state.streak++;
-    state.correctCount++;
-    if(state.streak > state.maxStreak) state.maxStreak = state.streak;
-    
-    // 狗开心动画
-    const dog = document.getElementById("dog");
-    dog.classList.add("happy");
-    setTimeout(() => dog.classList.remove("happy"), 500);
-    
-    alert("✅ 答对了！");
-  } else {
-    state.streak = 0;
-    state.wrongCount++;
-    alert(`❌ 答错了！正确答案是：${current.en} (${current.cn})`);
-    
-    // 随机生病
-    if (state.mood === "healthy" && Math.random() < 0.2) {
-      makeSick();
+  init: function() {
+    // 读取存档
+    const save = localStorage.getItem("DOG_GAME_V2");
+    if(save) {
+      try { this.state = Object.assign(this.state, JSON.parse(save)); } 
+      catch(e) { console.error("存档损坏"); }
     }
-  }
+    this.updateUI();
+    this.applyDogStyle();
+  },
 
-  // 体检模式逻辑
-  if (mode === "checkup") {
-    checkupCount++;
-    if (checkupCount >= 10) {
-      if (state.streak >= 8) { // 简单判断，这里用 streak 代表最后几题表现
-        alert("🎉 体检通过！小狗康复了！");
-        state.mood = "healthy";
-        state.disease = null;
-        state.cureCount++;
-        backHome();
+  save: function() {
+    localStorage.setItem("DOG_GAME_V2", JSON.stringify(this.state));
+    this.updateUI();
+  },
+
+  // --- 导航逻辑 ---
+  goHome: function() {
+    document.querySelectorAll(".card").forEach(el => el.classList.add("hidden"));
+    document.getElementById("home").classList.remove("hidden");
+    this.updateUI();
+  },
+
+  // --- 学习/体检逻辑 ---
+  startStudy: function() {
+    this.temp.mode = "study";
+    this.showQuizPage("📘 学习模式");
+    this.nextQuestion();
+  },
+
+  startCheckup: function() {
+    if(this.state.mood === "healthy") return alert("小狗很健康，不需要体检！");
+    this.temp.mode = "checkup";
+    this.temp.qCount = 0;
+    this.showQuizPage(`🏥 体检中 (${DISEASES[this.state.disease]})`);
+    this.nextQuestion();
+  },
+
+  showQuizPage: function(title) {
+    document.querySelectorAll(".card").forEach(el => el.classList.add("hidden"));
+    document.getElementById("quiz").classList.remove("hidden");
+    document.getElementById("quizTitle").innerText = title;
+  },
+
+  nextQuestion: function() {
+    // 获取词库
+    let pool = [];
+    if(this.temp.mode === "checkup" && this.state.disease) {
+      pool = WORDS[this.state.disease] || WORDS.general;
+    } else {
+      Object.values(WORDS).forEach(arr => pool.push(...arr));
+    }
+    
+    // 随机选词
+    const pair = pool[Math.floor(Math.random() * pool.length)];
+    this.temp.currentWord = {en: pair[0], cn: pair[1]};
+    
+    // 随机题型 (0:英选汉, 1:汉选英, 2:拼写, 3:填空)
+    const type = Math.floor(Math.random() * 4);
+    
+    // 重置界面
+    const qText = document.getElementById("questionText");
+    const cArea = document.getElementById("choiceArea");
+    const sArea = document.getElementById("spellArea");
+    const bArea = document.getElementById("blankArea");
+    cArea.innerHTML = "";
+    sArea.classList.add("hidden");
+    bArea.classList.add("hidden");
+
+    // 生成题目
+    if(type === 0 || type === 1) {
+      // 选择题
+      const isEnToCn = (type === 0);
+      qText.innerText = isEnToCn ? `"${this.temp.currentWord.en}" 的意思是？` : `"${this.temp.currentWord.cn}" 的英文是？`;
+      
+      const correctAns = isEnToCn ? this.temp.currentWord.cn : this.temp.currentWord.en;
+      // 干扰项
+      let wrong = pool[Math.floor(Math.random() * pool.length)];
+      while(wrong[0] === this.temp.currentWord.en) wrong = pool[Math.floor(Math.random() * pool.length)];
+      const wrongAns = isEnToCn ? wrong[1] : wrong[0];
+      
+      const opts = [correctAns, wrongAns].sort(() => Math.random() - 0.5);
+      
+      opts.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => app.handleAnswer(opt === correctAns);
+        cArea.appendChild(btn);
+      });
+    } 
+    else if(type === 2) {
+      // 拼写题
+      qText.innerText = `请拼写: ${this.temp.currentWord.cn}`;
+      sArea.classList.remove("hidden");
+      document.getElementById("spellInput").value = "";
+    }
+    else {
+      // 填空题
+      qText.innerText = "补全单词";
+      bArea.classList.remove("hidden");
+      const word = this.temp.currentWord.en;
+      const blankIdx = Math.floor(Math.random() * word.length);
+      this.temp.blankAns = word[blankIdx];
+      
+      document.getElementById("blankWordDisplay").innerHTML = word.split("").map((c,i) => 
+        i === blankIdx ? '<span class="blank"></span>' : c
+      ).join("");
+      
+      const letters = document.getElementById("letterButtons");
+      letters.innerHTML = "";
+      // 生成选项
+      const opts = [this.temp.blankAns, String.fromCharCode(97+Math.floor(Math.random()*26))].sort(() => Math.random()-0.5);
+      opts.forEach(l => {
+        const btn = document.createElement("button");
+        btn.className = "letter-btn";
+        btn.innerText = l;
+        btn.onclick = () => app.handleAnswer(l === app.temp.blankAns);
+        letters.appendChild(btn);
+      });
+    }
+  },
+
+  checkSpell: function() {
+    const val = document.getElementById("spellInput").value.trim().toLowerCase();
+    this.handleAnswer(val === this.temp.currentWord.en);
+  },
+
+  handleAnswer: function(isCorrect) {
+    this.state.total++;
+    
+    if(isCorrect) {
+      this.state.score++;
+      this.state.streak++;
+      this.state.correct++;
+      if(this.state.streak > this.state.maxStreak) this.state.maxStreak = this.state.streak;
+      document.getElementById("dog").classList.add("happy");
+      setTimeout(() => document.getElementById("dog").classList.remove("happy"), 500);
+      alert("✅ 答对了！");
+    } else {
+      this.state.streak = 0;
+      alert(`❌ 答错了！\n${this.temp.currentWord.en} = ${this.temp.currentWord.cn}`);
+      
+      // 生病逻辑
+      if(this.state.mood === "healthy" && Math.random() < 0.3) {
+        this.state.mood = "sick";
+        const dKeys = Object.keys(DISEASES);
+        this.state.disease = dKeys[Math.floor(Math.random() * dKeys.length)];
+        alert(`😱 糟糕！小狗生病了: ${DISEASES[this.state.disease]}`);
+      }
+    }
+
+    this.checkAchievements();
+    this.save();
+
+    // 体检模式检测
+    if(this.temp.mode === "checkup") {
+      this.temp.qCount++;
+      if(this.temp.qCount >= 10) {
+        if(this.state.streak >= 8) { // 最近连续答对算通过
+          this.state.mood = "healthy";
+          this.state.disease = null;
+          this.state.cured++;
+          alert("🎉 体检通过，小狗康复了！");
+        } else {
+          alert("⚠️ 体检未通过，请再试一次或去商店买药。");
+        }
+        this.goHome();
       } else {
-        alert("⚠️ 体检未通过，请继续吃药或学习！");
-        backHome();
+        this.nextQuestion();
       }
     } else {
-      next();
+      this.nextQuestion();
     }
-  } else {
-    next();
-  }
-  
-  checkAchievements();
-  save();
-}
+  },
 
-function makeSick() {
-  state.mood = "sick";
-  state.disease = DISEASES[Math.floor(Math.random() * DISEASES.length)];
-  alert(`😱 糟糕！因为答错题，小狗得了 ${DISEASE_NAMES[state.disease]}！\n快去商店买药吧！`);
-  updateUI();
-}
+  // --- PK 逻辑 ---
+  startPK: function() {
+    document.querySelectorAll(".card").forEach(el => el.classList.add("hidden"));
+    document.getElementById("pkPage").classList.remove("hidden");
+    this.temp.pkRound = 0;
+    this.temp.pkMyScore = 0;
+    this.temp.pkOpScore = 0;
+    this.nextPKRound();
+  },
 
-/* ===== PK 系统 ===== */
-function pkNext() {
-  if (pkRound >= 5) {
-    let result = "";
-    if (pkMyScore > pkOpponentScore) {
-      result = "🏆 你赢了！(+5 积分)";
-      state.score += 5;
-      state.pkWins++;
-    } else if (pkMyScore < pkOpponentScore) {
-      result = "😢 你输了...";
-      state.pkLosses++;
+  nextPKRound: function() {
+    if(this.temp.pkRound >= 5) {
+      // 结算
+      let res = "🤝 平局";
+      if(this.temp.pkMyScore > this.temp.pkOpScore) {
+        res = "🏆 你赢了！(+5分)";
+        this.state.score += 5;
+      } else if(this.temp.pkMyScore < this.temp.pkOpScore) {
+        res = "😢 你输了...";
+      }
+      document.getElementById("pkQuestion").innerText = res;
+      document.getElementById("pkOptions").innerHTML = "";
+      this.save();
+      return;
+    }
+
+    this.temp.pkRound++;
+    // 更新分数板
+    document.getElementById("pkMyScore").innerText = this.temp.pkMyScore;
+    document.getElementById("pkOpScore").innerText = this.temp.pkOpScore;
+    
+    // 出题
+    const pool = WORDS.general;
+    const pair = pool[Math.floor(Math.random() * pool.length)];
+    const wrong = pool[Math.floor(Math.random() * pool.length)];
+    
+    document.getElementById("pkQuestion").innerText = `第 ${this.temp.pkRound}/5 轮: ${pair[0]} 意思是?`;
+    
+    const opts = [pair[1], wrong[1]].sort(()=>Math.random()-0.5);
+    const div = document.getElementById("pkOptions");
+    div.innerHTML = "";
+    
+    opts.forEach(o => {
+      const btn = document.createElement("button");
+      btn.innerText = o;
+      btn.onclick = () => {
+        // 玩家得分
+        if(o === pair[1]) this.temp.pkMyScore += 10;
+        // 电脑随机得分 (70%胜率)
+        if(Math.random() < 0.7) this.temp.pkOpScore += 10;
+        this.nextPKRound();
+      };
+      div.appendChild(btn);
+    });
+  },
+
+  // --- 商店逻辑 ---
+  openShop: function() {
+    document.querySelectorAll(".card").forEach(el => el.classList.add("hidden"));
+    document.getElementById("shopPage").classList.remove("hidden");
+    const list = document.getElementById("medicineList");
+    list.innerHTML = "";
+    
+    Object.keys(DISEASES).forEach(k => {
+      const btn = document.createElement("button");
+      btn.innerText = `💊 治疗 ${DISEASES[k]}`;
+      btn.onclick = () => {
+        if(this.state.score < 5) return alert("积分不足！");
+        if(this.state.mood === "healthy") return alert("小狗没病！");
+        if(this.state.disease !== k) return alert("药不对症！");
+        
+        this.state.score -= 5;
+        this.state.mood = "healthy";
+        this.state.disease = null;
+        this.state.cured++;
+        alert("康复了！");
+        this.save();
+        this.goHome();
+      };
+      list.appendChild(btn);
+    });
+  },
+
+  // --- 设计逻辑 ---
+  openDesign: function() {
+    document.querySelectorAll(".card").forEach(el => el.classList.add("hidden"));
+    document.getElementById("designPage").classList.remove("hidden");
+    // 加载当前样式到滑块
+    document.getElementById("set_color").value = this.state.style.color;
+    document.getElementById("set_earL").value = this.state.style.earL;
+    document.getElementById("set_earR").value = this.state.style.earR;
+    document.getElementById("set_eyeL").value = this.state.style.eyeL;
+    document.getElementById("set_eyeR").value = this.state.style.eyeR;
+  },
+
+  previewDesign: function() {
+    const s = {
+      color: document.getElementById("set_color").value,
+      earL: document.getElementById("set_earL").value,
+      earR: document.getElementById("set_earR").value,
+      eyeL: document.getElementById("set_eyeL").value,
+      eyeR: document.getElementById("set_eyeR").value
+    };
+    this.renderDog(s);
+  },
+
+  saveDesign: function() {
+    if(this.state.score < 2) return alert("积分不足 (需要2分)");
+    const name = document.getElementById("designName").value || "未命名";
+    const s = {
+      name: name,
+      color: document.getElementById("set_color").value,
+      earL: document.getElementById("set_earL").value,
+      earR: document.getElementById("set_earR").value,
+      eyeL: document.getElementById("set_eyeL").value,
+      eyeR: document.getElementById("set_eyeR").value
+    };
+    this.state.designs.push(s);
+    this.state.style = s; // 应用
+    this.state.score -= 2;
+    this.save();
+    alert("保存成功！");
+  },
+
+  showGallery: function() {
+    document.getElementById("designPage").classList.add("hidden");
+    document.getElementById("galleryPage").classList.remove("hidden");
+    const grid = document.getElementById("galleryGrid");
+    grid.innerHTML = "";
+    this.state.designs.forEach((d, i) => {
+      const div = document.createElement("div");
+      div.className = "design-item";
+      div.innerHTML = `<div style="width:30px;height:30px;background:${d.color};border-radius:50%;margin:auto"></div><div>${d.name}</div>`;
+      div.onclick = () => {
+        this.state.style = d;
+        this.save();
+        alert("已应用样式");
+        this.applyDogStyle();
+      };
+      grid.appendChild(div);
+    });
+  },
+
+  applyDogStyle: function() {
+    this.renderDog(this.state.style);
+  },
+
+  renderDog: function(s) {
+    document.getElementById("dog").style.setProperty('--dogColor', s.color);
+    document.getElementById("earL_g").style.transform = `rotate(${s.earL}deg)`;
+    document.getElementById("earR_g").style.transform = `rotate(${s.earR}deg)`;
+    document.getElementById("eyeL_g").style.transform = `rotate(${s.eyeL}deg)`;
+    document.getElementById("eyeR_g").style.transform = `rotate(${s.eyeR}deg)`;
+  },
+
+  // --- 成就与统计 ---
+  checkAchievements: function() {
+    ACHIEVEMENTS.forEach(a => {
+      if(!this.state.unlockedAch.includes(a.id) && a.check(this.state)) {
+        this.state.unlockedAch.push(a.id);
+        alert(`🏆 解锁成就：${a.name}`);
+      }
+    });
+  },
+
+  openAchievements: function() {
+    document.querySelectorAll(".card").forEach(el => el.classList.add("hidden"));
+    document.getElementById("achievementPage").classList.remove("hidden");
+    const list = document.getElementById("achieveList");
+    list.innerHTML = "";
+    ACHIEVEMENTS.forEach(a => {
+      const isUnlock = this.state.unlockedAch.includes(a.id);
+      list.innerHTML += `
+        <div style="background:${isUnlock?'#ffd700':'#eee'};padding:10px;border-radius:8px;opacity:${isUnlock?1:0.5}">
+          <div style="font-weight:bold">${a.name}</div>
+          <div style="font-size:12px">${a.desc}</div>
+        </div>
+      `;
+    });
+  },
+
+  openStats: function() {
+    document.querySelectorAll(".card").forEach(el => el.classList.add("hidden"));
+    document.getElementById("statsPage").classList.remove("hidden");
+    const c = document.getElementById("statsContent");
+    const rate = this.state.total ? Math.round(this.state.correct/this.state.total*100) : 0;
+    c.innerHTML = `
+      <div class="stat-row"><span>总答题</span><span>${this.state.total}</span></div>
+      <div class="stat-row"><span>正确率</span><span>${rate}%</span></div>
+      <div class="stat-row"><span>最高连胜</span><span>${this.state.maxStreak}</span></div>
+      <div class="stat-row"><span>治愈次数</span><span>${this.state.cured}</span></div>
+    `;
+  },
+
+  resetData: function() {
+    if(confirm("确定清空吗？")) {
+      localStorage.removeItem("DOG_GAME_V2");
+      location.reload();
+    }
+  },
+
+  updateUI: function() {
+    document.getElementById("scoreBadge").innerText = `💰 ${this.state.score}`;
+    document.getElementById("streakBadge").innerText = `🔥 ${this.state.streak}`;
+    const hBtn = document.getElementById("healthBadge");
+    if(this.state.mood === "sick") {
+      hBtn.innerText = `🤒 ${DISEASES[this.state.disease]}`;
+      hBtn.style.color = "red";
+      document.getElementById("dog").classList.add("sick");
     } else {
-      result = "🤝 平局！";
+      hBtn.innerText = "❤️ 健康";
+      hBtn.style.color = "green";
+      document.getElementById("dog").classList.remove("sick");
     }
-    document.getElementById("pkResult").innerText = result;
-    document.getElementById("pkChoices").classList.add("hidden");
-    checkAchievements();
-    save();
-    return;
   }
-  
-  pkRound++;
-  pkCurrent = currentWords[Math.floor(Math.random() * currentWords.length)];
-  const wrong = currentWords[Math.floor(Math.random() * currentWords.length)];
-  pkOpts = [pkCurrent.cn, wrong.cn].sort(() => Math.random() - 0.5);
-  
-  document.getElementById("pkQuestion").innerText = `第 ${pkRound}/5 轮: "${pkCurrent.en}" 的意思是？`;
-  document.getElementById("pkResult").innerText = "";
-  document.getElementById("pk0").innerText = pkOpts[0];
-  document.getElementById("pk1").innerText = pkOpts[1];
-  document.getElementById("pkChoices").classList.remove("hidden");
-}
+};
 
-function pkChoose(idx) {
-  const isCorrect = pkOpts[idx] === pkCurrent.cn;
-  if (isCorrect) pkMyScore += 10;
-  
-  // 模拟对手 (70% 胜率)
-  if (Math.random() < 0.7) pkOpponentScore += 10;
-  
-  updatePKUI();
-  pkNext();
-}
-
-function updatePKUI() {
-  document.getElementById("myPKScore").innerText = pkMyScore;
-  document.getElementById("opponentPKScore").innerText = pkOpponentScore;
-}
-
-/* ===== 商店与设计 ===== */
-function buyMedicine(disease) {
-  if (state.score < 5) {
-    alert("💰 积分不足（需要5积分）！快去学习赚分吧！");
-    return;
-  }
-  if (state.mood === "healthy") {
-    alert("😊 小狗很健康，不需要吃药！");
-    return;
-  }
-  if (state.disease !== disease) {
-    alert("❌ 买错药了！请查看小狗的症状。");
-    return;
-  }
-
-  state.score -= 5;
-  state.mood = "healthy";
-  state.disease = null;
-  state.cureCount++;
-  alert("💊 药到病除！小狗康复了！");
-  checkAchievements();
-  save();
-  closeShop();
-}
-
-/* ===== 设计逻辑 ===== */
-function previewDesign() {
-  const color = document.getElementById("colorPicker").value;
-  const earL = document.getElementById("earLAngle").value;
-  const earR = document.getElementById("earRAngle").value;
-  const eyeL = document.getElementById("eyeLAngle").value;
-  const eyeR = document.getElementById("eyeRAngle").value;
-
-  document.getElementById("dog").style.setProperty('--dogColor', color);
-  document.getElementById("earL_g").style.transform = `rotate(${earL}deg)`;
-  document.getElementById("earR_g").style.transform = `rotate(${earR}deg)`;
-  document.getElementById("eyeL_g").style.transform = `rotate(${eyeL}deg)`;
-  document.getElementById("eyeR_g").style.transform = `rotate(${eyeR}deg)`;
-
-  document.getElementById("earLVal").innerText = earL + "°";
-  document.getElementById("earRVal").innerText = earR + "°";
-  document.getElementById("eyeLVal").innerText = eyeL + "°";
-  document.getElementById("eyeRVal").innerText = eyeR + "°";
-}
-
-function loadCurrentDesign() {
-  document.getElementById("colorPicker").value = state.color;
-  document.getElementById("earLAngle").value = state.earL;
-  document.getElementById("earRAngle").value = state.earR;
-  document.getElementById("eyeLAngle").value = state.eyeL;
-  document.getElementById("eyeRAngle").value = state.eyeR;
-  previewDesign();
-}
-
-function saveDesign() {
-  if (state.score < 2) {
-    alert("💰 积分不足（需要2积分）");
-    return;
-  }
-  const name = document.getElementById("designName").value || "未命名设计";
-  const newDesign = {
-    name: name,
-    color: document.getElementById("colorPicker").value,
-    earL: document.getElementById("earLAngle").value,
-    earR: document.getElementById("earRAngle").value,
-    eyeL: document.getElementById("eyeLAngle").value,
-    eyeR: document.getElementById("eyeRAngle").value
-  };
-
-  state.designs.push(newDesign);
-  state.score -= 2;
-  // 应用当前设计
-  state.color = newDesign.color;
-  state.earL = newDesign.earL;
-  state.earR = newDesign.earR;
-  state.eyeL = newDesign.eyeL;
-  state.eyeR = newDesign.eyeR;
-  
-  alert("💾 设计已保存并应用！");
-  checkAchievements();
-  save();
-}
-
-function renderGallery() {
-  const grid = document.getElementById("galleryGrid");
-  grid.innerHTML = "";
-  state.designs.forEach((d, idx) => {
-    const item = document.createElement("div");
-    item.className = "design-item";
-    item.innerHTML = `
-      <div style="width:50px;height:50px;background:${d.color};border-radius:50%;margin:0 auto"></div>
-      <div class="design-name">${d.name}</div>
-      <button class="delete-btn" onclick="applyDesign(${idx})">应用</button>
-    `;
-    grid.appendChild(item);
-  });
-}
-
-function applyDesign(idx) {
-  const d = state.designs[idx];
-  state.color = d.color;
-  state.earL = d.earL;
-  state.earR = d.earR;
-  state.eyeL = d.eyeL;
-  state.eyeR = d.eyeR;
-  alert("🎨 已应用设计：" + d.name);
-  save();
-  closeGallery();
-}
-
-/* ===== 统计与成就 ===== */
-function checkAchievements() {
-  let hasNew = false;
-  ACHIEVEMENTS.forEach(a => {
-    if (!state.achievements.includes(a.id) && a.check(state)) {
-      state.achievements.push(a.id);
-      alert(`🏆 解锁成就：${a.name}\n${a.desc}`);
-      hasNew = true;
-    }
-  });
-  if (hasNew) save();
-}
-
-function renderAchievements() {
-  const list = document.getElementById("achievementList");
-  list.innerHTML = "";
-  ACHIEVEMENTS.forEach(a => {
-    const unlocked = state.achievements.includes(a.id);
-    const div = document.createElement("div");
-    div.className = `achievement-item ${unlocked ? "unlocked" : ""}`;
-    div.innerHTML = `
-      <div class="achievement-icon">${a.icon}</div>
-      <div class="achievement-name">${a.name}</div>
-      <div style="font-size:10px;color:#888">${unlocked ? "已解锁" : "???"}</div>
-    `;
-    list.appendChild(div);
-  });
-}
-
-function renderStats() {
-  const list = document.getElementById("statsList");
-  const rate = state.totalAnswered === 0 ? 0 : Math.round((state.correctCount / state.totalAnswered) * 100);
-  list.innerHTML = `
-    <div class="stat-row"><span>📝 总答题数</span><span>${state.totalAnswered}</span></div>
-    <div class="stat-row"><span>✅ 正确率</span><span>${rate}%</span></div>
-    <div class="stat-row"><span>🔥 最高连胜</span><span>${state.maxStreak}</span></div>
-    <div class="stat-row"><span>💊 治愈次数</span><span>${state.cureCount}</span></div>
-    <div class="stat-row"><span>⚔️ PK胜场</span><span>${state.pkWins}</span></div>
-  `;
-}
-
-function resetStats() {
-  if(confirm("确定要重置所有进度吗？")) {
-    localStorage.removeItem("DOG_APP");
-    location.reload();
-  }
-}
-
-/* ===== 初始化 ===== */
-function updateDog() {
-  const dog = document.getElementById("dog");
-  dog.style.setProperty('--dogColor', state.color);
-  document.getElementById("earL_g").style.transform = `rotate(${state.earL}deg)`;
-  document.getElementById("earR_g").style.transform = `rotate(${state.earR}deg)`;
-  document.getElementById("eyeL_g").style.transform = `rotate(${state.eyeL}deg)`;
-  document.getElementById("eyeR_g").style.transform = `rotate(${state.eyeR}deg)`;
-  
-  if (state.mood === "sick") {
-    dog.classList.add("sick");
-  } else {
-    dog.classList.remove("sick");
-  }
-}
-
-function updateUI() {
-  document.getElementById("score").innerText = "💰 积分: " + state.score;
-  document.getElementById("streak").innerText = "🔥 连胜: " + state.streak;
-  
-  const status = document.getElementById("status");
-  if (state.mood === "healthy") {
-    status.innerText = "❤️ 状态: 健康";
-    status.style.color = "green";
-  } else {
-    status.innerText = `🤒 状态: 生病 (${DISEASE_NAMES[state.disease]})`;
-    status.style.color = "red";
-  }
-  updateDog();
-}
-
-// 启动
-updateUI)；
+// 启动程序
+app.init();
 
 </script>
 </body>
